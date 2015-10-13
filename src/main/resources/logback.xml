@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Spring Boot의 기본 설정 include -->
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <!-- jdbc 로그 OFF -->
+    <logger name="jdbc" level="OFF" />
+    <!-- jdbc.sqltiming 로그만 DEBUG로 ON -->
+    <!-- jdbc.sqltiming : SQL 문 + 실행 시간 -->
+    <logger name="jdbc.sqltiming" level="DEBUG" />
+</configuration>

@@ -11,6 +11,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

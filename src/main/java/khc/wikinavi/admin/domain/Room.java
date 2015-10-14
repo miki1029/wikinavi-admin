@@ -1,8 +1,6 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +9,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table
+@DiscriminatorValue("room")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Room extends Vertex {

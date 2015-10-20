@@ -17,3 +17,7 @@
     background: white;
     opacity: 0.5;
 }
+
+input.tile-width {
+    width: 50px;
+}

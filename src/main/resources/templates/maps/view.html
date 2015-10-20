@@ -26,13 +26,17 @@
                 <tr>
                     <th>(너비, 높이)</th>
                     <td>
-                        (<span id="tileWidth" th:text="${indoorMap.tileWidth}"></span>,
-                        <span id="tileHeight" th:text="${indoorMap.tileHeight}"></span>)
+                        ( <input type="number" id="tileWidth" class="tile-width" th:value="${indoorMap.tileWidth}"/> ,
+                        <!--( <span id="tileWidth" th:text="${indoorMap.tileWidth}"></span> ,-->
+                        <input type="number" id="tileHeight" class="tile-width" disabled="disabled" th:value="${indoorMap.tileHeight}"/> )
                     </td>
                 </tr>
                 <tr>
                     <th>(X,Y)</th>
-                    <td>(<span id="imageXPos"></span>,<span id="imageYPos"></span>)</td>
+                    <td>
+                        ( <input type="number" id="imageXPos" class="tile-width" disabled="disabled"/> ,
+                        <input type="number" id="imageYPos" class="tile-width" disabled="disabled"/> )
+                    </td>
                 </tr>
             </table>
 
@@ -40,7 +44,8 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div id="imageArea" class="thumbnail">
-                        <img src="../../static/images/20150904_170026.jpg" th:src="'/maps/image?fileName=' + ${indoorMap.imagePath}"
+                        <img src="../../static/images/20150904_170026.jpg"
+                             th:src="'/maps/image?fileName=' + ${indoorMap.imagePath}"
                              id="mapImage" alt="Map Image" onclick="getImageClickPosition(this)"/>
                     </div>
                     <div id="tileArea" class="tile-parent"></div>
@@ -82,8 +87,7 @@
             </table>
 
             <!-- Beacon Info -->
-            <h3>비콘 정보
-                <small>갈림길 필수 입력</small>
+            <h3>비콘 및 갈림길 정보
                 <button class="btn btn-success">입력하기</button>
             </h3>
             <table class="table">
@@ -98,6 +102,9 @@
                     <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
                 </tr>
             </table>
+            <form th:action="@{/maps/} + ${indoorMap.id} + @{/delete}" method="post">
+                <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
+            </form>
 
         </div>
         <!-- col -->
@@ -109,22 +116,29 @@
 <div layout:fragment="script">
     <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
     <script>
-        var $mapImage = $('#mapImage');
-        $('#tileWidth').change(function () {
-            var tileWidth = $(this).text();
-            var ratio = $mapImage.height() / $mapImage.width();
-            var tileHeight = parseInt(tileWidth * ratio);
-            renderTile(tileWidth);
-            $('#tileHeight').text(tileHeight);
-        }).change();
+        $(document).ready(function() {
+            var $tileWidth = $('#tileWidth');
+            var $tileHeight = $('#tileHeight');
+            var ratio = $tileHeight.val() / $tileWidth.val();
+            var imageAreaWidth = $('#imageArea').width();
+            var imageAreaHeight = parseInt(imageAreaWidth * ratio);
+            $tileWidth.change(function () {
+                var tileWidth = $(this).val();
+                var tileHeight = parseInt(tileWidth * ratio);
+                renderTile(tileWidth, tileHeight, imageAreaWidth, imageAreaHeight);
+                $tileHeight.val(tileHeight);
+
+                // tile hover
+                $('.tile').hover(function () {
+                    $('#imageXPos').val($(this).attr('data-x'));
+                    $('#imageYPos').val($(this).attr('data-y'));
+                });
+            }).change();
+        });
         /*
          $('.tile').click(function() {
          alert($(this).attr('data-x') + ',' + $(this).attr('data-y'));
          });*/
-        $('.tile').hover(function() {
-            $('#imageXPos').text($(this).attr('data-x'));
-            $('#imageYPos').text($(this).attr('data-y'));
-        });
     </script>
 </div>
 

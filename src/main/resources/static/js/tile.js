@@ -1,11 +1,8 @@
-function renderTile(xGridNum) {
+function renderTile(xGridNum, yGridNum, imageAreaWidth, imageAreaHeight) {
     var i, j;
     var $tileArea = $('#tileArea');
-    var $mapImage = $('#mapImage');
-    var ratio = $mapImage.height() / $mapImage.width();
-    var yGridNum = parseInt(xGridNum * ratio);
-    var tileWidth = $mapImage.width() / xGridNum;
-    var tileHeight = $mapImage.height() / yGridNum;
+    var tileWidth = imageAreaWidth / xGridNum;
+    var tileHeight = imageAreaHeight / yGridNum;
 
     $tileArea.empty();
 

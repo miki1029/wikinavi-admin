@@ -44,15 +44,12 @@
                     <label for="tileWidth" class="col-sm-3 control-label">(너비, 높이)</label>
 
                     <div class="col-sm-9">
-                        <input type="number" class="col-xs-3" id="tileWidth" name="tileWidth"
-                               th:errorclass="error-input" value="50"/>
-                        <input type="number" class="col-xs-3" id="tileHeight" name="tileHeight"
-                               disabled="disabled"/>
+                        ( <input type="number" class="tile-width" id="tileWidth" name="tileWidth"
+                                 th:errorclass="error-input" value="50"/> ,
+                        <input type="number" class="tile-width" id="tileHeight" name="tileHeight"
+                               disabled="disabled"/> )
                             <span th:if="${#fields.hasErrors('tileWidth')}" th:errors="*{tileWidth}"
                                   class="error-messages">error!</span>
-                        <div class="col-xs-6">
-                            <!--<button class="btn btn-info" id="showTileBtn">타일 보기</button>-->
-                        </div>
                     </div>
                 </div>
 
@@ -102,8 +99,14 @@
             var tileWidth = $(this).val();
             var ratio = $mapImage.height() / $mapImage.width();
             var tileHeight = parseInt(tileWidth * ratio);
-            renderTile(tileWidth);
+            renderTile(tileWidth, tileHeight, $mapImage.width(), $mapImage.height());
             $('#tileHeight').val(tileHeight);
+
+            // tile hover
+            $('.tile').hover(function () {
+                $('#imageXPos').val($(this).attr('data-x'));
+                $('#imageYPos').val($(this).attr('data-y'));
+            });
         }).change();
     </script>
 </div>

@@ -36,4 +36,8 @@ public class RoomService {
     public void delete(Integer id) {
         roomRepository.delete(id);
     }
+
+    public List<Room> findAllByMapId(Integer mapId) {
+        return roomRepository.findAllByMapId(mapId);
+    }
 }

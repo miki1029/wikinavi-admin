@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MapData {
-    private int buildingId;
+    private int mapId;
     private String name;
     private String address;
 
     public MapData(IndoorMap indoorMap) {
-        buildingId = indoorMap.getId();
+        mapId = indoorMap.getId();
         name = indoorMap.getTitle();
         address = indoorMap.getAddress();
     }

@@ -36,4 +36,8 @@ public class BeaconService {
     public void delete(Integer id) {
         beaconRepository.delete(id);
     }
+
+    public List<Beacon> findAllByMapId(Integer id) {
+        return beaconRepository.findAllByMapId(id);
+    }
 }

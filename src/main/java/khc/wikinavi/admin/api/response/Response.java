@@ -17,11 +17,12 @@ public class Response<T> {
         private String description;
     }
     private Result result;
-    private List<T> data;
+    private List<T> dataSet;
 
     public Response(List<T> tList) {
+        result = new Result();
         result.value = 0;
         result.description = "success";
-        data = tList;
+        dataSet = tList;
     }
 }

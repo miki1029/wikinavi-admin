@@ -13,12 +13,16 @@ import lombok.NoArgsConstructor;
 public class VertexData {
     private int vertexId;
     private String name;
+    private int x;
+    private int y;
     private String type;
     private String macAddr;
 
     public VertexData(Room room) {
         vertexId = room.getId();
         name = room.getName();
+        x = room.getX();
+        y = room.getY();
         type = "room";
         macAddr = "";
     }
@@ -26,6 +30,8 @@ public class VertexData {
     public VertexData(Beacon beacon) {
         vertexId = beacon.getId();
         name = beacon.getName();
+        x = beacon.getX();
+        y = beacon.getY();
         type = "beacon";
         macAddr = beacon.getMacAddr();
     }

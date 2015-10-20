@@ -1,6 +1,5 @@
 package khc.wikinavi.admin.api;
 
-import khc.wikinavi.admin.api.response.MapData;
 import khc.wikinavi.admin.api.response.Response;
 import khc.wikinavi.admin.api.response.VertexData;
 import khc.wikinavi.admin.domain.Beacon;
@@ -33,16 +32,16 @@ public class ApiController {
     // 건물 검색 API
     // GET /{contextRoot}/maps
     @RequestMapping(method = RequestMethod.GET)
-    Response<MapData> getMaps(@RequestParam(required = false) String name,
+    Response<IndoorMap> getMaps(@RequestParam(required = false) String name,
                               @RequestParam(required = false) String address) {
         List<IndoorMap> indoorMaps = indoorMapService.findAll();
-        List<MapData> mapDatas = new ArrayList<>(indoorMaps.size());
+/*        List<MapData> mapDatas = new ArrayList<>(indoorMaps.size());
 
         for (IndoorMap indoorMap : indoorMaps) {
             mapDatas.add(new MapData(indoorMap));
-        }
+        }*/
 
-        return new Response<>(mapDatas);
+        return new Response<>(indoorMaps);
     }
 
     // Vertex 검색 API

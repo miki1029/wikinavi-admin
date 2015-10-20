@@ -156,7 +156,7 @@ public class MapManagementController {
     }
 
     // 지도 조회 maps/view.html
-    // GET /maps/view/{id}
+    // GET /maps/{id}/view
     @RequestMapping(value = "{mapId}/view", method = RequestMethod.GET)
     String view(@PathVariable Integer mapId, Model model) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
@@ -166,6 +166,13 @@ public class MapManagementController {
         model.addAttribute("indoorMap", indoorMap);
         model.addAttribute("rooms", rooms);
         model.addAttribute("beacons", beacons);
+        return "maps/view";
+    }
+
+    // 지도 삭제
+    // DELETE /maps/{id}/delete
+    @RequestMapping(value = "{mapId}/delete", method = RequestMethod.DELETE)
+    String delete(@PathVariable Integer mapId, Model model) {
         return "maps/view";
     }
 }

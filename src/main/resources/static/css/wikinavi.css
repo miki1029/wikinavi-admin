@@ -1,0 +1,19 @@
+#imageArea {
+    position: relative;
+}
+
+.tile-parent {
+    position: absolute;
+    top: 5px;
+    left: 20px;
+}
+
+.tile {
+    position: absolute;
+    /*border: 1px solid white;*/
+}
+
+.tile:hover {
+    background: white;
+    opacity: 0.5;
+}

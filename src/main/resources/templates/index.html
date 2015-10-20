@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
     <title>Wikinavi</title>
 
     <!-- 부트스트랩 -->
     <link href="../static/css/bootstrap/bootstrap.min.css" th:href="@{css/bootstrap/bootstrap.min.css}"
-          rel="stylesheet">
+          rel="stylesheet"/>
 
     <!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
     <!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
@@ -17,6 +17,9 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Custom Style -->
+    <link href="../static/css/wikinavi.css" th:href="@{css/wikinavi.css}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -109,16 +112,42 @@
         </h1>
     </div>
     <div class="row">
+
         <div class="col-md-6">
+
+            <!-- Image Info -->
+            <h3>이미지 정보
+                <small>너비 50 기준 상대 크기</small>
+            </h3>
+            <table id="imageInfo" class="table">
+                <tr>
+                    <th>(너비, 높이)</th>
+                    <td>(<span id="imageWidthInfo"></span>,<span id="imageHeightInfo"></span>)</td>
+                </tr>
+                <tr>
+                    <th>(X,Y)</th>
+                    <td>(<span id="imageXPos"></span>,<span id="imageYPos"></span>)</td>
+                </tr>
+            </table>
+
             <!-- images -->
-            <div class="thumbnail">
-                <img src="../static/images/20150904_170026.jpg" th:src="@{images/20150904_170026.jpg}" alt="Map Image"/>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="imageArea" class="thumbnail">
+                        <img src="../static/images/20150904_170026.jpg" th:src="@{images/20150904_170026.jpg}"
+                             id="mapImage" alt="Map Image" onclick="getImageClickPosition(this)"/>
+                    </div>
+                    <div id="tileArea" class="tile-parent"></div>
+                </div>
             </div>
+
         </div>
+        <!-- col -->
+
         <div class="col-md-6">
 
             <!-- Date Info -->
-            <h3>Date Info</h3>
+            <h3>날짜 정보</h3>
             <table class="table">
                 <tr>
                     <th>생성일</th>
@@ -131,13 +160,14 @@
             </table>
 
             <!-- Room Info -->
-            <h3>Room Info
+            <h3>방 정보
                 <small>입구 좌표 입력</small>
+                <button class="btn btn-success">입력하기</button>
             </h3>
             <table class="table">
                 <tr>
-                    <th>Position</th>
-                    <th>Name</th>
+                    <th>좌표</th>
+                    <th>방 이름</th>
                 </tr>
                 <tr>
                     <td>(5,5)</td>
@@ -146,14 +176,15 @@
             </table>
 
             <!-- Beacon Info -->
-            <h3>Beacon Info
+            <h3>비콘 정보
                 <small>갈림길 필수 입력</small>
+                <button class="btn btn-success">입력하기</button>
             </h3>
             <table class="table">
                 <tr>
-                    <th>Position</th>
-                    <th>Name</th>
-                    <th>Mac Address</th>
+                    <th>좌표</th>
+                    <th>비콘 이름</th>
+                    <th>맥 주소</th>
                 </tr>
                 <tr>
                     <td>(5,5)</td>
@@ -163,12 +194,20 @@
             </table>
 
         </div>
+        <!-- col -->
+
+        <div class="col-md-12" id="test"></div>
+
     </div>
+    <!-- row -->
 </div>
+<!-- container -->
 
 <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
-<script src="../static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+<script src="../static/js/bootstrap/bootstrap.min.js" th:src="@{js/bootstrap/bootstrap.min.js}"></script>
+<!-- Custom Script -->
+<script src="../static/js/tile.js" th:src="@{js/tile.js}"></script>
 </body>
 </html>

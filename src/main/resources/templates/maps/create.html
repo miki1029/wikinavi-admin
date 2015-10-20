@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+    <style>
+        .tile {
+            border-right: 1px dotted white;
+            border-bottom: 1px dotted white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+    <div class="page-header">
+        <h1>지도 생성
+            <small>Step 2 : 지도 데이터 입력</small>
+        </h1>
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <!-- images -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="imageArea" class="thumbnail">
+                        <img src="../../static/images/20150904_170026.jpg"
+                             th:src="'/maps/image?fileName=' + ${savedName}" id="mapImage" alt="Map Image"/>
+                    </div>
+                    <div id="tileArea" class="tile-parent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!-- col -->
+
+        <div class="col-md-6">
+            <form class="form-horizontal" th:action="@{/maps/create}" th:object="${indoorMapForm}" method="post">
+                <!-- Image Info -->
+                <div class="form-group">
+                    <label for="tileWidth" class="col-sm-3 control-label">(너비, 높이)</label>
+
+                    <div class="col-sm-9">
+                        <input type="number" class="col-xs-3" id="tileWidth" name="tileWidth"
+                               th:errorclass="error-input" value="50"/>
+                        <input type="number" class="col-xs-3" id="tileHeight" name="tileHeight"
+                               disabled="disabled"/>
+                            <span th:if="${#fields.hasErrors('tileWidth')}" th:errors="*{tileWidth}"
+                                  class="error-messages">error!</span>
+                        <div class="col-xs-6">
+                            <!--<button class="btn btn-info" id="showTileBtn">타일 보기</button>-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="title" class="col-sm-3 control-label">건물 이름</label>
+
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="title" name="title" placeholder="ex) 신공학관 4층"
+                               th:field="*{title}" th:errorclass="error-input" value="신공학관 5층"/>
+                            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+                                  class="error-messages">error!</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="col-sm-3 control-label">주소</label>
+
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="address" name="address"
+                               placeholder="ex) 서울시 중구 필동"
+                               th:field="*{address}" th:errorclass="error-input" value="서울시 중구 필동"/>
+                            <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                  class="error-messages">error!</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <input type="hidden" id="imagePath" name="imagePath" th:value="${savedName}"/>
+                        <!--<input type="hidden" id="tileHeight" name="tileHeight"/>-->
+                        <button type="submit" class="btn btn-default">생성</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <!-- col -->
+    </div>
+    <!-- row -->
+</div>
+
+<div layout:fragment="script">
+    <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
+    <script>
+        var $mapImage = $('#mapImage');
+        $('#tileWidth').change(function () {
+            var tileWidth = $(this).val();
+            var ratio = $mapImage.height() / $mapImage.width();
+            var tileHeight = parseInt(tileWidth * ratio);
+            renderTile(tileWidth);
+            $('#tileHeight').val(tileHeight);
+        }).change();
+    </script>
+</div>
+
+</body>
+</html>

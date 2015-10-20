@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+    <div class="page-header">
+        <h1>지도 목록</h1>
+    </div>
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>건물 이름</th>
+            <th>주소</th>
+            <th>수정일</th>
+            <th colspan="2">Check</th>
+        </tr>
+        <tr th:each="indoorMap : ${indoorMaps}">
+            <td th:text="${indoorMap.id}">1</td>
+            <td><a href="#" th:href="@{/maps/} + ${indoorMap.id} + @{/view}" th:text="${indoorMap.title}">신공학관 4층</a></td>
+            <td th:text="${indoorMap.address}">서울시 중구 필동</td>
+            <td th:text="${indoorMap.modifiedTime}">2015-10-05 21:27:53</td>
+            <td>
+                <form th:action="@{/maps/edit}" method="get">
+                    <input class="btn btn-default" type="submit" name="form" value="편집"/>
+                    <input type="hidden" name="id" th:value="${indoorMap.id}"/>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/maps/delete}" method="post">
+                    <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
+                    <input type="hidden" name="id" th:value="${indoorMap.id}"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <a href="upload.html" th:href="@{/maps/upload}" class="btn btn-success" role="button">지도 생성</a>
+</div>
+
+</body>
+</html>

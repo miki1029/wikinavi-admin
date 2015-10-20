@@ -7,12 +7,14 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.sql.DataSource;
 
 /**
  * Created by miki on 15. 10. 11..
  */
+// web.xml
 @Configuration
 public class AppConfig {
     @Autowired
@@ -35,5 +37,10 @@ public class AppConfig {
     // dataSource Wrapping for Logging
     DataSource dataSource() {
         return new Log4jdbcProxyDataSource(this.dataSource);
+    }
+
+    @Bean
+    String uploadPath() {
+        return "/var/wikinavi/images/";
     }
 }

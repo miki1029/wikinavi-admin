@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+    <div class="page-header">
+        <h1>
+            <span th:text="${indoorMap.title}">건물 이름</span>
+            <small th:text="${indoorMap.address}">주소</small>
+        </h1>
+    </div>
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <!-- Image Info -->
+            <h3>이미지 정보
+                <small>너비 <span th:text="${indoorMap.tileWidth}">50</span> 기준 상대 크기</small>
+            </h3>
+            <table id="imageInfo" class="table">
+                <tr>
+                    <th>(너비, 높이)</th>
+                    <td>
+                        (<span id="tileWidth" th:text="${indoorMap.tileWidth}"></span>,
+                        <span id="tileHeight" th:text="${indoorMap.tileHeight}"></span>)
+                    </td>
+                </tr>
+                <tr>
+                    <th>(X,Y)</th>
+                    <td>(<span id="imageXPos"></span>,<span id="imageYPos"></span>)</td>
+                </tr>
+            </table>
+
+            <!-- images -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="imageArea" class="thumbnail">
+                        <img src="../../static/images/20150904_170026.jpg" th:src="'/maps/image?fileName=' + ${indoorMap.imagePath}"
+                             id="mapImage" alt="Map Image" onclick="getImageClickPosition(this)"/>
+                    </div>
+                    <div id="tileArea" class="tile-parent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!-- col -->
+
+        <div class="col-md-6">
+
+            <!-- Date Info -->
+            <h3>날짜 정보</h3>
+            <table class="table">
+                <tr>
+                    <th>생성일</th>
+                    <td th:text="${indoorMap.createdTime}">2015-09-04 17:00:26</td>
+                </tr>
+                <tr>
+                    <th>수정일</th>
+                    <td th:text="${indoorMap.modifiedTime}">2015-10-05 21:27:53</td>
+                </tr>
+            </table>
+
+            <!-- Room Info -->
+            <h3>방 정보
+                <small>입구 좌표 입력</small>
+                <button class="btn btn-success">입력하기</button>
+            </h3>
+            <table class="table">
+                <tr>
+                    <th>좌표</th>
+                    <th>방 이름</th>
+                </tr>
+                <tr th:each="room : ${rooms}">
+                    <td>(<span th:text="${room.x}">5</span>,<span th:text="${room.y}">5</span>)</td>
+                    <td th:text="${room.name}">강당</td>
+                </tr>
+            </table>
+
+            <!-- Beacon Info -->
+            <h3>비콘 정보
+                <small>갈림길 필수 입력</small>
+                <button class="btn btn-success">입력하기</button>
+            </h3>
+            <table class="table">
+                <tr>
+                    <th>좌표</th>
+                    <th>비콘 이름</th>
+                    <th>맥 주소</th>
+                </tr>
+                <tr th:each="beacon : ${beacons}">
+                    <td>(<span th:text="${beacon.x}">5</span>,<span th:text="${beacon.y}">5</span>)</td>
+                    <td th:text="${beacon.name}">엘레베이터 앞</td>
+                    <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
+                </tr>
+            </table>
+
+        </div>
+        <!-- col -->
+
+    </div>
+    <!-- row -->
+</div>
+
+<div layout:fragment="script">
+    <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
+    <script>
+        var $mapImage = $('#mapImage');
+        $('#tileWidth').change(function () {
+            var tileWidth = $(this).text();
+            var ratio = $mapImage.height() / $mapImage.width();
+            var tileHeight = parseInt(tileWidth * ratio);
+            renderTile(tileWidth);
+            $('#tileHeight').text(tileHeight);
+        }).change();
+        /*
+         $('.tile').click(function() {
+         alert($(this).attr('data-x') + ',' + $(this).attr('data-y'));
+         });*/
+        $('.tile').hover(function() {
+            $('#imageXPos').text($(this).attr('data-x'));
+            $('#imageYPos').text($(this).attr('data-y'));
+        });
+    </script>
+</div>
+
+</body>
+</html>

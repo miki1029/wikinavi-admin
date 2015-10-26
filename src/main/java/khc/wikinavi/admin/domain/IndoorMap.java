@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class IndoorMap {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, length = 45)

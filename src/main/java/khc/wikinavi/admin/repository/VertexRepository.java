@@ -1,10 +1,10 @@
 package khc.wikinavi.admin.repository;
 
-import khc.wikinavi.admin.domain.Beacon;
+import khc.wikinavi.admin.domain.Vertex;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Created by miki on 15. 10. 13..
  */
-public interface BeaconRepository extends JpaRepository<Beacon, Integer> {
+public interface VertexRepository extends JpaRepository<Vertex, Integer> {
 }

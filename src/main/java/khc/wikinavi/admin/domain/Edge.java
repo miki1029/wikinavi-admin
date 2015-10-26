@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Edge {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(optional = false)

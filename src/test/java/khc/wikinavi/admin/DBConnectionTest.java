@@ -1,13 +1,12 @@
 package khc.wikinavi.admin;
 
 import khc.wikinavi.admin.domain.*;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -25,6 +24,19 @@ public class DBConnectionTest {
     private IndoorMap indoorMap;
     private List<Vertex> vertexes = new ArrayList<>();
     private List<Edge> edges = new ArrayList<>();
+
+    EntityManagerFactory emf;
+
+    @BeforeClass
+    public void setUpForClass() {
+        emf = Persistence.createEntityManagerFactory("wikinavi");
+
+    }
+
+    @AfterClass
+    public void tearDownForClass() {
+        emf.close();
+    }
 
     @Before
     public void setUp() {
@@ -61,21 +73,14 @@ public class DBConnectionTest {
 
     @Test
     public void testJpaConnection() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("wikinavi");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
 
             em.persist(indoorMap);
-
-            for (Vertex vertex : vertexes) {
-                em.persist(vertex);
-            }
-
-            for (Edge edge : edges) {
-                em.persist(edge);
-            }
+            vertexes.forEach(em::persist);
+            edges.forEach(em::persist);
 
             tx.commit();
         }
@@ -86,6 +91,6 @@ public class DBConnectionTest {
         finally {
             em.close();
         }
-        emf.close();
     }
+
 }

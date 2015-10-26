@@ -1,8 +1,13 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by miki on 15. 10. 13..
@@ -12,9 +17,15 @@ import javax.persistence.*;
 @DiscriminatorValue("room")
 @Data
 @EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
 @NoArgsConstructor
 public class Room extends Vertex {
-    @Column(nullable = false)
+    @Column(nullable = false, length = 45)
     private String name;
+
+    public Room(IndoorMap indoorMap,Integer x, Integer y, String name) {
+        this.setIndoorMap(indoorMap);
+        this.setX(x);
+        this.setY(y);
+        this.name = name;
+    }
 }

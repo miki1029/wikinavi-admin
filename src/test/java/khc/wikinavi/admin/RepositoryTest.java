@@ -26,7 +26,7 @@ public class RepositoryTest {
         Room room = new Room();
         room.setX(5);
         room.setY(5);
-        room.setMapId(1);
+//        room.setMapId(1);
         room.setName("5145 강의실");
 //        IndoorMap indoorMap = new IndoorMap(null, "신공학관 4층", "서울시 중구 필동", "images/20150904_170026.jpg", 50, 60,
 //                new Date(), new Date());

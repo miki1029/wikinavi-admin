@@ -1,6 +1,5 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,13 +17,20 @@ import javax.persistence.Table;
 @DiscriminatorValue("beacon")
 @Data
 @EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
 @NoArgsConstructor
 public class Beacon extends Vertex {
 
-    @Column
+    @Column(length = 45)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 17, unique = true)
     private String macAddr;
+
+    public Beacon(IndoorMap indoorMap, Integer x, Integer y, String name, String macAddr) {
+        this.setIndoorMap(indoorMap);
+        this.setX(x);
+        this.setY(y);
+        this.name = name;
+        this.macAddr = macAddr;
+    }
 }

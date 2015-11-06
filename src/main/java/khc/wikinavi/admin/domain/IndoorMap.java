@@ -4,9 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by miki on 15. 10. 13..
@@ -16,36 +15,22 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class IndoorMap {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
-    @Column(nullable = false, length = 45)
-    private String title;
+    // data
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
+    @Column(nullable = false, length = 45)                  private String title;
+    @Column(nullable = false, length = 128)                 private String address;
+    @Column(nullable = false, length = 256)                 private String imagePath;
+    @Column(nullable = false)                               private Integer tileWidth;
+    @Column(nullable = false)                               private Integer tileHeight;
+    @Column(nullable = false) @Temporal(TemporalType.DATE)  private Date createdTime;
+    @Column(nullable = false) @Temporal(TemporalType.DATE)  private Date modifiedTime;
 
-    @Column(nullable = false, length = 128)
-    private String address;
-
-    @Column(nullable = false, length = 256)
-    private String imagePath;
-
-    @Column(nullable = false)
-    private Integer tileWidth;
-
-    @Column(nullable = false)
-    private Integer tileHeight;
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date createdTime;
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date modifiedTime;
-
-    @OneToMany(mappedBy = "indoorMap")
+    // graph data
+    @OneToMany(mappedBy = "indoorMap", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vertex> vertexes = new ArrayList<>();
 
+    // constructor
     public IndoorMap(String title, String address, String imagePath,
                      Integer tileWidth, Integer tileHeight,
                      Date createdTime, Date modifiedTime) {
@@ -63,5 +48,39 @@ public class IndoorMap {
         this.tileHeight = tileHeight;
         this.createdTime = new Date();
         this.modifiedTime = new Date();
+    }
+
+    // getter
+    public List<Room> getRooms() {
+        // vertexes에서 Room인 인스턴스만 확인하여 반환
+        return vertexes.stream().filter(vertex -> vertex instanceof Room).map(vertex -> (Room) vertex).collect(Collectors.toList());
+    }
+
+    public List<Beacon> getBeacons() {
+        // vertexes에서 Beacon인 인스턴스만 확인하여 반환
+        return vertexes.stream().filter(vertex -> vertex instanceof Beacon).map(vertex -> (Beacon) vertex).collect(Collectors.toList());
+    }
+
+    // methods
+    // 가장 가까운 3개 Vertex 반환
+    @Deprecated
+    public List<Vertex> findNearbyVertexes(int x, int y) {
+        TreeMap<Double, Vertex> vertexTreeMap = new TreeMap<>();
+        for (Vertex vertex : vertexes) {
+            double distance = vertex.calculateDistance(x, y);
+            vertexTreeMap.put(distance, vertex);
+        }
+
+        List<Vertex> nearbyVertexes = new ArrayList<>(3);
+        for (Map.Entry<Double, Vertex> entry : vertexTreeMap.entrySet()) {
+            nearbyVertexes.add(entry.getValue());
+            if (nearbyVertexes.size() == 3) break;
+        }
+
+        return nearbyVertexes;
+    }
+
+    public List<Vertex> findShortestPath(Vertex startVertex, Vertex endVertex) {
+        return null;
     }
 }

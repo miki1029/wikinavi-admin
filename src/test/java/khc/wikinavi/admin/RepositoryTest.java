@@ -1,9 +1,7 @@
 package khc.wikinavi.admin;
 
 import khc.wikinavi.admin.domain.*;
-import khc.wikinavi.admin.repository.EdgeRepository;
-import khc.wikinavi.admin.repository.IndoorMapRepository;
-import khc.wikinavi.admin.repository.VertexRepository;
+import khc.wikinavi.admin.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,16 +13,25 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 public class RepositoryTest {
 
-    @Autowired private IndoorMapRepository indoorMapRepository;
-    @Autowired private VertexRepository vertexRepository;
-//    @Autowired private RoomRepository roomRepository;
-//    @Autowired private BeaconRepository beaconRepository;
-    @Autowired private EdgeRepository edgeRepository;
+    @Autowired
+    private IndoorMapRepository indoorMapRepository;
+    @Autowired
+    private VertexRepository vertexRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private BeaconRepository beaconRepository;
+    @Autowired
+    private EdgeRepository edgeRepository;
 
     private IndoorMap indoorMap;
     private List<Vertex> vertexes = new ArrayList<>();
@@ -50,12 +57,59 @@ public class RepositoryTest {
         edges.add(new Edge(beacon1, beacon2));
         edges.add(new Edge(beacon2, room2));
         edges.add(new Edge(beacon2, room4));
+
+//        edgeRepository.deleteAll();
+//        vertexRepository.deleteAll();
+        indoorMapRepository.deleteAll();
     }
 
     @Test
-    public void testSave() throws Exception {
+    public void testSaveAndCount() throws Exception {
         indoorMapRepository.save(indoorMap);
-        vertexes.forEach(vertexRepository::save);
-        edges.forEach(edgeRepository::save);
+        assertThat(indoorMapRepository.count(), is(1L));
+
+//        vertexes.forEach(vertexRepository::save);
+        assertThat(vertexRepository.count(), is(6L));
+        assertThat(roomRepository.count(), is(4L));
+        assertThat(beaconRepository.count(), is(2L));
+
+//        edges.forEach(edgeRepository::save);
+        assertThat(edgeRepository.count(), is(5L));
+    }
+
+    @Test
+    public void testDeleteAll() throws Exception {
+        indoorMapRepository.save(indoorMap);
+//        vertexes.forEach(vertexRepository::save);
+//        edges.forEach(edgeRepository::save);
+
+//        edgeRepository.deleteAll();
+//        vertexRepository.deleteAll();
+        assertThat(edgeRepository.count(), not(0L));
+        assertThat(vertexRepository.count(), not(0L));
+        assertThat(roomRepository.count(), not(0L));
+        assertThat(beaconRepository.count(), not(0L));
+        assertThat(indoorMapRepository.count(), not(0L));
+
+        indoorMapRepository.deleteAll();
+
+        assertThat(edgeRepository.count(), is(0L));
+        assertThat(vertexRepository.count(), is(0L));
+        assertThat(roomRepository.count(), is(0L));
+        assertThat(beaconRepository.count(), is(0L));
+        assertThat(indoorMapRepository.count(), is(0L));
+    }
+
+    @Test
+    public void testOrphanRemove() throws Exception {
+        indoorMapRepository.save(indoorMap);
+        Long edgeCount1 = edgeRepository.count();
+        Long vertexCount1 = vertexRepository.count();
+        Vertex vertex = indoorMap.getVertexes().get(0);
+        vertexRepository.delete(vertex);
+        Long edgeCount2 = edgeRepository.count();
+        Long vertexCount2 = vertexRepository.count();
+        assertThat(vertexCount1, not(vertexCount2));
+        assertThat(edgeCount1, not(edgeCount2));
     }
 }

@@ -2,6 +2,7 @@ package khc.wikinavi.admin.api.response;
 
 import khc.wikinavi.admin.domain.Beacon;
 import khc.wikinavi.admin.domain.Room;
+import khc.wikinavi.admin.domain.Vertex;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,21 +19,24 @@ public class VertexData {
     private String type;
     private String macAddr;
 
-    public VertexData(Room room) {
-        vertexId = room.getId();
-        name = room.getName();
-        x = room.getX();
-        y = room.getY();
-        type = "room";
-        macAddr = "";
-    }
-
-    public VertexData(Beacon beacon) {
-        vertexId = beacon.getId();
-        name = beacon.getName();
-        x = beacon.getX();
-        y = beacon.getY();
-        type = "beacon";
-        macAddr = beacon.getMacAddr();
+    public VertexData(Vertex vertex) {
+        if(vertex instanceof Room) {
+            Room room = (Room) vertex;
+            vertexId = room.getId();
+            name = room.getName();
+            x = room.getX();
+            y = room.getY();
+            type = "room";
+            macAddr = "";
+        }
+        else if(vertex instanceof Beacon) {
+            Beacon beacon = (Beacon) vertex;
+            vertexId = beacon.getId();
+            name = beacon.getName();
+            x = beacon.getX();
+            y = beacon.getY();
+            type = "beacon";
+            macAddr = beacon.getMacAddr();
+        }
     }
 }

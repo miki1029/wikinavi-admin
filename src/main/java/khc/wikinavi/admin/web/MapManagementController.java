@@ -160,8 +160,8 @@ public class MapManagementController {
     @RequestMapping(value = "{mapId}/view", method = RequestMethod.GET)
     String view(@PathVariable Integer mapId, Model model) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Room> rooms = roomService.findAllByMapId(mapId);
-        List<Beacon> beacons = beaconService.findAllByMapId(mapId);
+        List<Room> rooms = indoorMap.getRooms();
+        List<Beacon> beacons = indoorMap.getBeacons();
 
         model.addAttribute("indoorMap", indoorMap);
         model.addAttribute("rooms", rooms);

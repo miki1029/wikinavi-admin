@@ -21,6 +21,10 @@ public class IndoorMapService {
         return indoorMapRepository.findAll();
     }
 
+    public List<IndoorMap> findLikeTitleAndAddress(String title, String address) {
+        return indoorMapRepository.findByTitleContainingAndAddressContaining(title, address);
+    }
+
     public IndoorMap findOne(Integer id) {
         return indoorMapRepository.findOne(id);
     }
@@ -36,4 +40,5 @@ public class IndoorMapService {
     public void delete(Integer id) {
         indoorMapRepository.delete(id);
     }
+
 }

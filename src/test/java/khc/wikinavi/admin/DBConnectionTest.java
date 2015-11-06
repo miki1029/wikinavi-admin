@@ -79,8 +79,9 @@ public class DBConnectionTest {
             tx.begin();
 
             em.persist(indoorMap);
-            vertexes.forEach(em::persist);
-            edges.forEach(em::persist);
+//            vertexes.forEach(em::persist);
+//            edges.forEach(em::persist);
+
 
             tx.commit();
         }

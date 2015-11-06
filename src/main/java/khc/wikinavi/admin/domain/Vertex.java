@@ -15,26 +15,21 @@ import java.util.List;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Data
 public abstract class Vertex {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
-    @Column(nullable = false)
-    private Integer x;
+    // data
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)     private Integer id;
+    @Column(nullable = false)                                   private Integer x;
+    @Column(nullable = false)                                   private Integer y;
+    @ManyToOne(optional = false) @JoinColumn(name = "map_id")   private IndoorMap indoorMap;
 
-    @Column(nullable = false)
-    private Integer y;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "map_id")
-    private IndoorMap indoorMap;
-
-    @OneToMany(mappedBy = "vertex1")
+    // graph data
+    @OneToMany(mappedBy = "vertex1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Edge> edges1 = new ArrayList<>();
 
-    @OneToMany(mappedBy = "vertex2")
+    @OneToMany(mappedBy = "vertex2", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Edge> edges2 = new ArrayList<>();
 
+    // getter, setter
     public List<Edge> getEdges() {
         if(edges1 == null || edges2 == null) return null;
         List<Edge> edges = new ArrayList<>(edges1.size() + edges2.size());
@@ -50,6 +45,22 @@ public abstract class Vertex {
         }
 
         this.indoorMap = indoorMap;
-        indoorMap.getVertexes().add(this);
+        if(!indoorMap.getVertexes().contains(this)) {
+            indoorMap.getVertexes().add(this);
+        }
+    }
+
+    // methods
+    public double calculateDistance(int x, int y) {
+        return Math.sqrt(Math.pow(Math.abs(this.x - x), 2) + Math.pow(Math.abs(this.y - y), 2));
+    }
+
+    public List<Vertex> findShortestPathByStartPoint(int x, int y) {
+        return null;
+    }
+
+    public List<Vertex> findShortestPathByStartVertex(Vertex startVertex) {
+
+        return null;
     }
 }

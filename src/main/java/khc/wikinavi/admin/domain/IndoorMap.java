@@ -63,7 +63,6 @@ public class IndoorMap {
 
     // methods
     // 가장 가까운 3개 Vertex 반환
-    @Deprecated
     public List<Vertex> findNearbyVertexes(int x, int y) {
         TreeMap<Double, Vertex> vertexTreeMap = new TreeMap<>();
         for (Vertex vertex : vertexes) {
@@ -80,7 +79,4 @@ public class IndoorMap {
         return nearbyVertexes;
     }
 
-    public List<Vertex> findShortestPath(Vertex startVertex, Vertex endVertex) {
-        return null;
-    }
 }

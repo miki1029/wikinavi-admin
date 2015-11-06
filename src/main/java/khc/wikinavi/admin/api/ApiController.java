@@ -10,6 +10,7 @@ import khc.wikinavi.admin.service.BeaconService;
 import khc.wikinavi.admin.service.IndoorMapService;
 import khc.wikinavi.admin.service.RoomService;
 import khc.wikinavi.admin.service.VertexService;
+import khc.wikinavi.admin.util.ShortestPathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,9 @@ public class ApiController {
     // GET /{contextRoot}/maps/{mapId}/rooms?name={name}
     @RequestMapping(value = "maps/{mapId}/rooms", method = RequestMethod.GET)
     Response<VertexData> getRooms(@PathVariable Integer mapId, @RequestParam(required = false) String name) {
-//        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Room> rooms = roomService.findByMapId(mapId);
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+//        List<Room> rooms = roomService.findByMapId(mapId);
+        List<Room> rooms = indoorMap.getRooms();
         List<VertexData> vertexDatas = new ArrayList<>(rooms.size());
 
         vertexDatas.addAll(rooms.stream().map(VertexData::new).collect(Collectors.toList()));
@@ -74,36 +76,41 @@ public class ApiController {
     }
 
     // (x, y)에서 vertex까지 탐색하여 vertex list 반환
-    // GET /{contextRoot}/maps/{mapId}/vertexes/{vertexId}/start?x={x}&y={y}
-    @RequestMapping(value = "maps/{mapId}/vertexes/{vertexId}/start", method = RequestMethod.GET)
+    // GET /{contextRoot}/maps/{mapId}/vertexes/end/{vertexId}/start?x={x}&y={y}
+    @RequestMapping(value = "maps/{mapId}/vertexes/end/{vertexId}/start", method = RequestMethod.GET)
     Response<List<VertexData>> getRouteVertexes(@PathVariable Integer mapId,
-                                          @PathVariable Integer vertexId,
-                                          @RequestParam Integer x, @RequestParam Integer y) {
+                                                @PathVariable Integer vertexId,
+                                                @RequestParam Integer x, @RequestParam Integer y) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        Vertex end = vertexService.findOne(vertexId);
         List<Vertex> nearbyVertexes = indoorMap.findNearbyVertexes(x, y);
 
         List<List<VertexData>> resultList = new ArrayList<>(nearbyVertexes.size());
-        for (Vertex vertex : nearbyVertexes) {
-            List<Vertex> routeVertexes = vertex.findShortestPathByStartPoint(x, y);
-            List<VertexData> routeVertexDatas = new ArrayList<>(routeVertexes.size());
+        for (Vertex start : nearbyVertexes) {
+            List<Vertex> path = ShortestPathUtil.shortestPath(indoorMap, start, end);
+            List<VertexData> pathData = new ArrayList<>(path.size());
 
-            routeVertexDatas.addAll(routeVertexes.stream().map(VertexData::new).collect(Collectors.toList()));
+            pathData.addAll(path.stream().map(VertexData::new).collect(Collectors.toList()));
 
-            resultList.add(routeVertexDatas);
+            resultList.add(pathData);
         }
 
         return new Response<>(resultList);
     }
 
-    @RequestMapping(value = "vertexes/start/{startVertexId}/end/{endVertexId}", method = RequestMethod.GET)
-    Response<VertexData> getRouteVertexes(@PathVariable Integer startVertexId, @PathVariable Integer endVertexId) {
-        Vertex startVertex = vertexService.findOne(startVertexId);
-        Vertex endVertex = vertexService.findOne(endVertexId);
+    // GET /{contextRoot}/maps/{mapId}/vertexes/end{endVertexId}/start/{startVertexId}
+    @RequestMapping(value = "maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}", method = RequestMethod.GET)
+    Response<VertexData> getRouteVertexes(@PathVariable Integer mapId,
+                                          @PathVariable Integer startVertexId,
+                                          @PathVariable Integer endVertexId) {
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        Vertex start = vertexService.findOne(startVertexId);
+        Vertex end = vertexService.findOne(endVertexId);
 
-        List<Vertex> vertexes = endVertex.findShortestPathByStartVertex(startVertex);
-        List<VertexData> vertexDatas = new ArrayList<>(vertexes.size());
+        List<Vertex> path = ShortestPathUtil.shortestPath(indoorMap, start, end);
+        List<VertexData> vertexDatas = new ArrayList<>(path.size());
 
-        vertexDatas.addAll(vertexes.stream().map(VertexData::new).collect(Collectors.toList()));
+        vertexDatas.addAll(path.stream().map(VertexData::new).collect(Collectors.toList()));
 
         return new Response<>(vertexDatas);
     }

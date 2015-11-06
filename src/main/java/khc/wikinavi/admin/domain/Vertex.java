@@ -17,9 +17,9 @@ import java.util.List;
 public abstract class Vertex {
 
     // data
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)     private Integer id;
-    @Column(nullable = false)                                   private Integer x;
-    @Column(nullable = false)                                   private Integer y;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)     protected Integer id;
+    @Column(nullable = false)                                   protected Integer x;
+    @Column(nullable = false)                                   protected Integer y;
     @ManyToOne(optional = false) @JoinColumn(name = "map_id")   private IndoorMap indoorMap;
 
     // graph data
@@ -50,17 +50,14 @@ public abstract class Vertex {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Vertex(id=" + this.id + ", x=" + this.x + ", y=" + this.y + ")";
+    }
+
     // methods
     public double calculateDistance(int x, int y) {
         return Math.sqrt(Math.pow(Math.abs(this.x - x), 2) + Math.pow(Math.abs(this.y - y), 2));
     }
 
-    public List<Vertex> findShortestPathByStartPoint(int x, int y) {
-        return null;
-    }
-
-    public List<Vertex> findShortestPathByStartVertex(Vertex startVertex) {
-
-        return null;
-    }
 }

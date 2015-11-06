@@ -28,4 +28,9 @@ public class Room extends Vertex {
         this.setY(y);
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Room(id=" + this.id + ", x=" + this.x + ", y=" + this.y + ", name=" + this.name + ")";
+    }
 }

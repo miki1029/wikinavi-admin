@@ -33,4 +33,9 @@ public class Beacon extends Vertex {
         this.name = name;
         this.macAddr = macAddr;
     }
+
+    @Override
+    public String toString() {
+        return "Beacon(id=" + this.id + ", x=" + this.x + ", y=" + this.y + ", name=" + this.name + ", macAddr=" + this.macAddr + ")";
+    }
 }

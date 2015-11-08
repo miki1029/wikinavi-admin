@@ -14,9 +14,9 @@
             <!-- 필수 속성 -->
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <!--<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>-->
-            <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testnavi?useUnicode=true&amp;characterEncoding=utf8"/>
+            <property name="javax.persistence.jdbc.user" value="navi_user"/>
+            <property name="javax.persistence.jdbc.password" value="1q2w3e4r"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://106.249.235.42:3306/wikinavi?useUnicode=true&amp;characterEncoding=utf8"/>
             <!--<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:file:/tmp/wikinavi"/>-->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
 

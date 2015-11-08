@@ -4,7 +4,6 @@ import khc.wikinavi.admin.api.response.MapData;
 import khc.wikinavi.admin.api.response.Response;
 import khc.wikinavi.admin.api.response.VertexData;
 import khc.wikinavi.admin.domain.IndoorMap;
-import khc.wikinavi.admin.domain.Room;
 import khc.wikinavi.admin.domain.Vertex;
 import khc.wikinavi.admin.service.BeaconService;
 import khc.wikinavi.admin.service.IndoorMapService;
@@ -49,28 +48,30 @@ public class ApiController {
     }
 
     // Vertex 검색 API
-    // GET /{contextRoot}/maps/{mapId}/vertexes
+    // GET /{contextRoot}/maps/{mapId}/vertexes?type=[room,beacon]&name={name}
     @RequestMapping(value = "maps/{mapId}/vertexes", method = RequestMethod.GET)
     Response<VertexData> getVertexes(@PathVariable Integer mapId,
+                                     @RequestParam(required = false) String type,
                                      @RequestParam(required = false) String name) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<VertexData> vertexDatas = new ArrayList<>(indoorMap.getVertexes().size());
+        List<VertexData> vertexDatas = new ArrayList<>();
+        List<? extends Vertex> vertexes = null;
 
-        vertexDatas.addAll(indoorMap.getVertexes().stream().map(VertexData::new).collect(Collectors.toList()));
+        if (type == null) {
+            vertexes = indoorMap.getVertexes();
+        } else if (type.equals("room")) {
+            vertexes = indoorMap.getRooms();
+        } else if (type.equals("beacon")) {
+            vertexes = indoorMap.getBeacons();
+        } else {
+            vertexes = indoorMap.getVertexes();
+        }
 
-        return new Response<>(vertexDatas);
-    }
-
-    // Room 검색 API
-    // GET /{contextRoot}/maps/{mapId}/rooms?name={name}
-    @RequestMapping(value = "maps/{mapId}/rooms", method = RequestMethod.GET)
-    Response<VertexData> getRooms(@PathVariable Integer mapId, @RequestParam(required = false) String name) {
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-//        List<Room> rooms = roomService.findByMapId(mapId);
-        List<Room> rooms = indoorMap.getRooms();
-        List<VertexData> vertexDatas = new ArrayList<>(rooms.size());
-
-        vertexDatas.addAll(rooms.stream().map(VertexData::new).collect(Collectors.toList()));
+        for (Vertex vertex : vertexes) {
+            if (name == null || vertex.getName().contains(name)) {
+                vertexDatas.add(new VertexData(vertex));
+            }
+        }
 
         return new Response<>(vertexDatas);
     }
@@ -98,7 +99,7 @@ public class ApiController {
         return new Response<>(resultList);
     }
 
-    // GET /{contextRoot}/maps/{mapId}/vertexes/end{endVertexId}/start/{startVertexId}
+    // GET /{contextRoot}/maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}
     @RequestMapping(value = "maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}", method = RequestMethod.GET)
     Response<VertexData> getRouteVertexes(@PathVariable Integer mapId,
                                           @PathVariable Integer startVertexId,

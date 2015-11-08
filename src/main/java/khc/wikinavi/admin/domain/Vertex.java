@@ -30,6 +30,7 @@ public abstract class Vertex {
     private List<Edge> edges2 = new ArrayList<>();
 
     // getter, setter
+    public abstract String getName();
     public List<Edge> getEdges() {
         if(edges1 == null || edges2 == null) return null;
         List<Edge> edges = new ArrayList<>(edges1.size() + edges2.size());

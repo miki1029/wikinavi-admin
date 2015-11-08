@@ -3,6 +3,9 @@ package khc.wikinavi.admin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by miki on 15. 10. 11..
  */
@@ -38,4 +41,15 @@ public class AppConfig {
     String uploadPath() {
         return "/var/wikinavi/images/";
     }
+
+    @Bean
+    DateFormat dateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    }
+
+    @Bean
+    DateFormat fileDateFormat() {
+        return new SimpleDateFormat("yyyyMMdd-HHmmss");
+    }
+
 }

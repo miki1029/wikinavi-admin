@@ -5,16 +5,26 @@ import khc.wikinavi.admin.api.response.Response;
 import khc.wikinavi.admin.api.response.VertexData;
 import khc.wikinavi.admin.domain.IndoorMap;
 import khc.wikinavi.admin.domain.Vertex;
-import khc.wikinavi.admin.service.BeaconService;
 import khc.wikinavi.admin.service.IndoorMapService;
-import khc.wikinavi.admin.service.RoomService;
 import khc.wikinavi.admin.service.VertexService;
 import khc.wikinavi.admin.util.ShortestPathUtil;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,15 +38,14 @@ public class ApiController {
 
     static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 
-    @Autowired IndoorMapService indoorMapService;
-    @Autowired VertexService vertexService;
-    @Autowired RoomService roomService;
-    @Autowired BeaconService beaconService;
+    @Autowired                      private IndoorMapService indoorMapService;
+    @Autowired                      private VertexService vertexService;
+    @Resource(name = "uploadPath")  private String uploadPath;
 
     // 건물 검색 API
-    // GET /{contextRoot}/maps?title={title}&address={address}
+    // GET /api/maps?title={title}&address={address}
     @RequestMapping(value = "maps", method = RequestMethod.GET)
-    Response<MapData> getMaps(@RequestParam(required = false, defaultValue = "") String title,
+    public Response<MapData> getMaps(@RequestParam(required = false, defaultValue = "") String title,
                               @RequestParam(required = false, defaultValue = "") String address) {
         logger.info("건물 검색 API : title=" + title + "&address=" + address);
         List<IndoorMap> indoorMaps = indoorMapService.findLikeTitleAndAddress(title, address);
@@ -48,9 +57,9 @@ public class ApiController {
     }
 
     // Vertex 검색 API
-    // GET /{contextRoot}/maps/{mapId}/vertexes?type=[room,beacon]&name={name}
+    // GET /api/maps/{mapId}/vertexes?type=[room,beacon]&name={name}
     @RequestMapping(value = "maps/{mapId}/vertexes", method = RequestMethod.GET)
-    Response<VertexData> getVertexes(@PathVariable Integer mapId,
+    public Response<VertexData> getVertexes(@PathVariable Integer mapId,
                                      @RequestParam(required = false) String type,
                                      @RequestParam(required = false) String name) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
@@ -76,10 +85,10 @@ public class ApiController {
         return new Response<>(vertexDatas);
     }
 
-    // (x, y)에서 vertex까지 탐색하여 vertex list 반환
-    // GET /{contextRoot}/maps/{mapId}/vertexes/end/{vertexId}/start?x={x}&y={y}
+    // 최단 경로 검색 API - (x, y) ~ Vertex
+    // GET /api/maps/{mapId}/vertexes/end/{vertexId}/start?x={x}&y={y}
     @RequestMapping(value = "maps/{mapId}/vertexes/end/{vertexId}/start", method = RequestMethod.GET)
-    Response<List<VertexData>> getRouteVertexes(@PathVariable Integer mapId,
+    public Response<List<VertexData>> getRouteVertexes(@PathVariable Integer mapId,
                                                 @PathVariable Integer vertexId,
                                                 @RequestParam Integer x, @RequestParam Integer y) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
@@ -99,9 +108,10 @@ public class ApiController {
         return new Response<>(resultList);
     }
 
-    // GET /{contextRoot}/maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}
+    // 최단 경로 검색 API - Vertex ~ Vertex
+    // GET /api/maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}
     @RequestMapping(value = "maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}", method = RequestMethod.GET)
-    Response<VertexData> getRouteVertexes(@PathVariable Integer mapId,
+    public Response<VertexData> getRouteVertexes(@PathVariable Integer mapId,
                                           @PathVariable Integer startVertexId,
                                           @PathVariable Integer endVertexId) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
@@ -115,4 +125,59 @@ public class ApiController {
 
         return new Response<>(vertexDatas);
     }
+
+    // 이미지 반환 API - mapId
+    // GET /api/maps/{mapId}/image
+    @ResponseBody
+    @RequestMapping(value = "maps/{mapId}/image", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> image(@PathVariable Integer mapId) throws IOException {
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        String fileName = indoorMap.getImagePath();
+        return image(fileName);
+    }
+
+    // 이미지 반환 API - fileName
+    // GET /api/images?fileName={fileName}
+    @ResponseBody
+    @RequestMapping(value = "images", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> image(@RequestParam String fileName) throws IOException {
+
+        ResponseEntity<byte[]> entity = null;
+
+        logger.info("fileName: " + fileName);
+
+        try (InputStream inputStream = new FileInputStream(uploadPath + fileName)) {
+            // 확장자 명
+            String formatName = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            MediaType mediaType = null;
+            if (formatName.equals("JPG") || formatName.equals("JPEG")) mediaType = MediaType.IMAGE_JPEG;
+            else if (formatName.equals("GIF")) mediaType = MediaType.IMAGE_GIF;
+            else if (formatName.equals("PNG")) mediaType = MediaType.IMAGE_PNG;
+
+            HttpHeaders headers = new HttpHeaders();
+
+            if (mediaType != null) {
+                headers.setContentType(mediaType);
+            } else {
+                throw new UnsupportedOperationException();
+            }
+
+            entity = new ResponseEntity<>(IOUtils.toByteArray(inputStream), headers, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return entity;
+    }
+
+    // 이미지 비율
+    // GET /api/images/ratio?fileName={fileName}
+    @RequestMapping(value = "images/ratio", method = RequestMethod.GET)
+    public Double imageRatio(@RequestParam String fileName) throws IOException {
+        logger.info("fileName: " + fileName);
+
+        BufferedImage image = ImageIO.read(new File(uploadPath + fileName));
+        return (double)image.getHeight() / image.getWidth();
+    }
+
 }

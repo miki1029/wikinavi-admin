@@ -8,127 +8,154 @@
 
 <!-- Contents -->
 <div class="container" layout:fragment="content">
+
+    <!-- Title, Address -->
     <div class="page-header">
         <h1>
             <span th:text="${indoorMap.title}">건물 이름</span>
             <small th:text="${indoorMap.address}">주소</small>
         </h1>
     </div>
+
+    <!-- Map Info -->
     <div class="row">
+        <!-- Menu -->
+        <div class="col-xs-12 col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="active">
+                    <a href="view.html" th:href="@{/maps/} + ${indoorMap.id} + @{/view}">
+                        정보 보기</a></li>
+                <li role="presentation">
+                    <a href="modify/modify.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify}">
+                        기본 정보 수정</a></li>
+                <li role="presentation">
+                    <a href="modify/image.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/image}">
+                        지도 이미지 변경</a></li>
+                <li role="presentation">
+                    <a href="modify/room.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/room}">
+                        방 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="modify/beacon.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/beacon}">
+                        비콘 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="modify/edge.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/edge}">
+                        길 정보 입력</a></li>
+            </ul>
+        </div>
 
-        <div class="col-md-6">
+        <!-- Map Info -->
+        <div class="col-xs-12 col-md-10">
 
-            <!-- Image Info -->
-            <h3>이미지 정보
-                <small>너비 <span th:text="${indoorMap.tileWidth}">50</span> 기준 상대 크기</small>
-            </h3>
-            <table id="imageInfo" class="table">
-                <tr>
-                    <th>(너비, 높이)</th>
-                    <td>
-                        ( <input type="number" id="tileWidth" class="tile-width" th:value="${indoorMap.tileWidth}"/> ,
-                        <!--( <span id="tileWidth" th:text="${indoorMap.tileWidth}"></span> ,-->
-                        <input type="number" id="tileHeight" class="tile-width" disabled="disabled"
-                               th:value="${indoorMap.tileHeight}"/> )
-                    </td>
-                </tr>
-                <tr>
-                    <th>(X,Y)</th>
-                    <td>
-                        ( <input type="number" id="imageXPos" class="tile-width" disabled="disabled"/> ,
-                        <input type="number" id="imageYPos" class="tile-width" disabled="disabled"/> )
-                    </td>
-                </tr>
-            </table>
+            <div class="col-md-6">
 
-            <!-- images -->
-            <div class="row">
-                <div class="col-xs-12">
-                    <div id="imageArea" class="thumbnail">
-                        <img src="../../static/images/20150904_170026.jpg"
-                             th:src="'/api/images?fileName=' + ${indoorMap.imagePath}"
-                             id="mapImage" alt="Map Image" onclick="getImageClickPosition(this)"/>
+                <!-- Image Info -->
+                <h3>이미지 정보</h3>
+                <table id="imageInfo" class="table">
+                    <tr>
+                        <th>(너비, 높이)</th>
+                        <td>
+                            ( <input type="number" id="tileWidth" class="tile-width" th:value="${indoorMap.tileWidth}"/> ,
+                            <!--( <span id="tileWidth" th:text="${indoorMap.tileWidth}"></span> ,-->
+                            <input type="number" id="tileHeight" class="tile-width" disabled="disabled"
+                                   th:value="${indoorMap.tileHeight}"/> )
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>(X,Y)</th>
+                        <td>
+                            ( <input type="number" id="imageXPos" class="tile-width" disabled="disabled"/> ,
+                            <input type="number" id="imageYPos" class="tile-width" disabled="disabled"/> )
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- images -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="imageArea" class="thumbnail">
+                            <img src="../../static/images/20150904_170026.jpg"
+                                 th:src="'/api/images?fileName=' + ${indoorMap.imagePath}"
+                                 id="mapImage" alt="Map Image" onclick="getImageClickPosition(this)"/>
+                        </div>
+                        <div id="tileArea" class="tile-parent"></div>
                     </div>
-                    <div id="tileArea" class="tile-parent"></div>
                 </div>
-            </div>
 
-        </div><!-- /.col -->
+            </div><!-- /.col -->
 
-        <div class="col-md-6">
+            <div class="col-md-6">
 
-            <!-- Date Info -->
-            <h3>날짜 정보</h3>
-            <table class="table">
-                <tr>
-                    <th>생성일</th>
-                    <td th:text="${indoorMap.createdTime}">2015-09-04 17:00:26</td>
-                </tr>
-                <tr>
-                    <th>수정일</th>
-                    <td th:text="${indoorMap.modifiedTime}">2015-10-05 21:27:53</td>
-                </tr>
-            </table>
+                <!-- Date Info -->
+                <h3>날짜 정보</h3>
+                <table class="table">
+                    <tr>
+                        <th>생성일</th>
+                        <td th:text="${indoorMap.createdTime}">2015-09-04 17:00:26</td>
+                    </tr>
+                    <tr>
+                        <th>수정일</th>
+                        <td th:text="${indoorMap.modifiedTime}">2015-10-05 21:27:53</td>
+                    </tr>
+                </table>
 
-            <!-- Room Info -->
-            <h3>방 정보
-                <small>입구 좌표 입력</small>
-                <button class="btn btn-success">입력하기</button>
-            </h3>
-            <table class="table">
-                <tr>
-                    <th>좌표</th>
-                    <th>방 이름</th>
-                </tr>
-                <tr th:each="room : ${rooms}">
-                    <td>(<span th:text="${room.x}">5</span>,<span th:text="${room.y}">5</span>)</td>
-                    <td th:text="${room.name}">강당</td>
-                </tr>
-            </table>
+                <!-- Room Info -->
+                <h3>방 정보
+                    <small>입구 좌표 입력</small>
+                </h3>
+                <table class="table">
+                    <tr>
+                        <th>좌표</th>
+                        <th>방 이름</th>
+                    </tr>
+                    <tr th:each="room : ${rooms}">
+                        <td>(<span th:text="${room.x}">5</span>,<span th:text="${room.y}">5</span>)</td>
+                        <td th:text="${room.name}">강당</td>
+                    </tr>
+                </table>
 
-            <!-- Beacon Info -->
-            <h3>비콘 정보
-                <small>갈림길</small>
-                <button class="btn btn-success">입력하기</button>
-            </h3>
-            <table class="table">
-                <tr>
-                    <th>좌표</th>
-                    <th>비콘 이름</th>
-                    <th>맥 주소</th>
-                </tr>
-                <tr th:each="beacon : ${beacons}">
-                    <td>(<span th:text="${beacon.x}">5</span>,<span th:text="${beacon.y}">5</span>)</td>
-                    <td th:text="${beacon.name}">엘레베이터 앞</td>
-                    <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
-                </tr>
-            </table>
+                <!-- Beacon Info -->
+                <h3>비콘 정보
+                    <small>갈림길</small>
+                </h3>
+                <table class="table">
+                    <tr>
+                        <th>좌표</th>
+                        <th>비콘 이름</th>
+                        <th>맥 주소</th>
+                    </tr>
+                    <tr th:each="beacon : ${beacons}">
+                        <td>(<span th:text="${beacon.x}">5</span>,<span th:text="${beacon.y}">5</span>)</td>
+                        <td th:text="${beacon.name}">엘레베이터 앞</td>
+                        <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
+                    </tr>
+                </table>
 
-            <!-- Edge Info -->
-            <h3>길 정보
-                <button class="btn btn-success">입력하기</button>
-            </h3>
-            <table class="table">
-                <tr>
-                    <th>위치1</th>
-                    <th>위치2</th>
-                    <th>가중치</th>
-                </tr>
-                <tr th:each="edge : ${edges}">
-                    <td th:text="${edge.vertex1.name}">강당</td>
-                    <td th:text="${edge.vertex2.name}">엘레베이터</td>
-                    <td th:text="${edge.weight}">10</td>
-                </tr>
-            </table>
+                <!-- Edge Info -->
+                <h3>길 정보</h3>
+                <table class="table">
+                    <tr>
+                        <th>위치1</th>
+                        <th>위치2</th>
+                        <th>가중치</th>
+                    </tr>
+                    <tr th:each="edge : ${edges}">
+                        <td th:text="${edge.vertex1.name}">강당</td>
+                        <td th:text="${edge.vertex2.name}">엘레베이터</td>
+                        <td th:text="${edge.weight}">10</td>
+                    </tr>
+                </table>
 
-            <!-- 삭제 -->
-            <form th:action="@{/maps/} + ${indoorMap.id} + @{/delete}" method="post">
-                <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
-            </form>
+                <!-- 삭제 -->
+                <form th:action="@{/maps/} + ${indoorMap.id} + @{/delete}" method="post">
+                    <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
+                </form>
 
-        </div><!-- /.col -->
+            </div><!-- /.col -->
+
+        </div><!-- /.row -->
 
     </div><!-- /.row -->
+
 </div><!-- /.container-->
 
 <div layout:fragment="script">

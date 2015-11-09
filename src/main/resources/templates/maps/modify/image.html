@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+
+    <!-- Title, Address -->
+    <div class="page-header">
+        <h1>
+            <span th:text="${indoorMap.title}">건물 이름</span>
+            <small th:text="${indoorMap.address}">주소</small>
+        </h1>
+    </div>
+
+    <!-- Map Info -->
+    <div class="row">
+        <!-- Menu -->
+        <div class="col-xs-12 col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a href="../view.html" th:href="@{/maps/} + ${indoorMap.id} + @{/view}">
+                        정보 보기</a></li>
+                <li role="presentation">
+                    <a href="modify.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify}">
+                        기본 정보 수정</a></li>
+                <li role="presentation" class="active">
+                    <a href="image.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/image}">
+                        지도 이미지 변경</a></li>
+                <li role="presentation">
+                    <a href="room.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/room}">
+                        방 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="beacon.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/beacon}">
+                        비콘 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="edge.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/edge}">
+                        길 정보 입력</a></li>
+            </ul>
+        </div>
+
+        <!-- Map Info -->
+        <div class="col-xs-12 col-md-10">
+
+            <form id="uploadForm" class="form-horizontal" th:action="@{/maps/} + ${indoorMap.id } + @{/modify/image}"
+                  method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="imagePath" class="col-sm-2 control-label">지도 업로드</label>
+
+                    <div class="col-sm-10">
+                        <input type="file" id="imagePath" name="file"/>
+
+                        <p class="help-block">지도 이미지 파일을 업로드 해 주세요.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-default">업로드</button>
+                    </div>
+                </div>
+            </form>
+
+        </div><!-- /.row -->
+
+    </div><!-- /.row -->
+
+</div><!-- /.container-->
+
+<div layout:fragment="script">
+</div>
+
+</body>
+</html>

@@ -79,7 +79,7 @@ public class MapCreateController {
     }
 
     // 업로드 process
-    private String uploadFile(String originalName, byte[] fileData) throws IOException {
+    public String uploadFile(String originalName, byte[] fileData) throws IOException {
         String today = fileDateFormat.format(new Date());
         UUID uuid = UUID.randomUUID();
         String formatName = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase();
@@ -108,7 +108,7 @@ public class MapCreateController {
     // form 데이터 의존, DB에 indoorMap 삽입
     // POST /maps/create
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    String create(@Validated IndoorMapForm form, BindingResult result, Model model) throws IOException {
+    public String create(@Validated IndoorMapForm form, BindingResult result, Model model) throws IOException {
         if (form.getTileHeight() == null) {
             form.setTileHeight((int) (form.getTileWidth() * form.getRatio()));
         }

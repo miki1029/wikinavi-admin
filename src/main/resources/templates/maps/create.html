@@ -3,12 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>Wikinavi</title>
-    <style>
-        .tile {
-            border-right: 1px dotted white;
-            border-bottom: 1px dotted white;
-        }
-    </style>
+    <link href="../../static/css/wikinavi.css" th:href="@{/css/dotted-tile.css}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -95,7 +90,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
-            var $mapImage = $('#mapImage');
             var $tileWidth = $('#tileWidth');
             var $tileHeight = $('#tileHeight');
 

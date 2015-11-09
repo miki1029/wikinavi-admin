@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+    <link href="../../../static/css/wikinavi.css" th:href="@{/css/dotted-tile.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+
+    <!-- Title, Address -->
+    <div class="page-header">
+        <h1>
+            <span th:text="${indoorMap.title}">건물 이름</span>
+            <small th:text="${indoorMap.address}">주소</small>
+        </h1>
+    </div>
+
+    <!-- Map Info -->
+    <div class="row">
+        <!-- Menu -->
+        <div class="col-xs-12 col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a href="../view.html" th:href="@{/maps/} + ${indoorMap.id} + @{/view}">
+                        정보 보기</a></li>
+                <li role="presentation" class="active">
+                    <a href="modify.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify}">
+                        기본 정보 수정</a></li>
+                <li role="presentation">
+                    <a href="image.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/image}">
+                        지도 이미지 변경</a></li>
+                <li role="presentation">
+                    <a href="room.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/room}">
+                        방 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="beacon.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/beacon}">
+                        비콘 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="edge.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/edge}">
+                        길 정보 입력</a></li>
+            </ul>
+        </div>
+
+        <!-- Modify Info -->
+        <div class="col-xs-12 col-md-10">
+
+            <div class="col-md-6">
+
+                <!-- images -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="imageArea" class="thumbnail">
+                            <img src="../../../static/images/20150904_170026.jpg"
+                                 th:src="'/api/images?fileName=' + ${indoorMap.imagePath}"
+                                 id="mapImage" alt="Map Image"/>
+                        </div>
+                        <div id="tileArea" class="tile-parent"></div>
+                    </div>
+                </div>
+
+            </div><!-- col -->
+
+            <div class="col-md-6">
+
+                <form class="form-horizontal" th:action="@{/maps/} + ${indoorMap.id} + @{/modify}"
+                      th:object="${indoorMapForm}" method="post">
+                    <!-- Image Info -->
+                    <div class="form-group">
+                        <label for="tileWidth" class="col-sm-3 control-label">(너비, 높이)</label>
+
+                        <div class="col-sm-9">
+                            ( <input type="number" class="tile-width" id="tileWidth" name="tileWidth"
+                                     th:errorclass="error-input" value="50" th:value="${indoorMap.tileWidth}"/> ,
+                            <input type="number" class="tile-width" id="tileHeight" name="tileHeight"
+                                   th:value="${indoorMap.tileHeight}" disabled="disabled"/>
+                            )
+                            <span th:if="${#fields.hasErrors('tileWidth')}" th:errors="*{tileWidth}"
+                                  class="error-messages">error!</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">건물 이름</label>
+
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="ex) 신공학관 4층"
+                                   th:field="*{title}" th:errorclass="error-input"
+                                   value="신공학관 5층" th:value="${indoorMap.title}"/>
+                            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+                                  class="error-messages">error!</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address" class="col-sm-3 control-label">주소</label>
+
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="address" name="address"
+                                   placeholder="ex) 서울시 중구 필동" th:field="*{address}" th:errorclass="error-input"
+                                   value="서울시 중구 필동" th:value="${indoorMap.address}"/>
+                            <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                  class="error-messages">error!</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="hidden" id="ratio" name="ratio" th:value="${ratio}"/>
+                            <input type="hidden" id="imagePath" name="imagePath" th:value="${indoorMap.imagePath}"/>
+                            <button type="submit" class="btn btn-success">수정</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div><!-- /.col -->
+        </div><!-- /.col -->
+
+    </div><!-- /.row -->
+
+</div><!-- /.container-->
+
+<div layout:fragment="script">
+    <script src="../../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            $('#title').val(/*[[${indoorMap.title}]]*/);
+            $('#address').val(/*[[${indoorMap.address}]]*/);
+
+            var $tileWidth = $('#tileWidth');
+            var $tileHeight = $('#tileHeight');
+
+            var ratio = /*[[${ratio}]]*/ 1;
+            var imageAreaWidth = $('#imageArea').width();
+            var imageAreaHeight = parseInt(imageAreaWidth * ratio);
+            $tileWidth.change(function () {
+                var tileWidth = $(this).val();
+                var tileHeight = parseInt(tileWidth * ratio);
+                renderTile(tileWidth, tileHeight, imageAreaWidth, imageAreaHeight);
+                $tileHeight.val(tileHeight);
+
+                // tile hover
+                $('.tile').hover(function () {
+                    $('#imageXPos').val($(this).attr('data-x'));
+                    $('#imageYPos').val($(this).attr('data-y'));
+                });
+            }).change();
+        });
+        /*]]>*/
+    </script>
+</div>
+
+</body>
+</html>

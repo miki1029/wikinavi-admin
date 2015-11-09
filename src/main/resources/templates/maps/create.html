@@ -28,7 +28,7 @@
                 <div class="col-xs-12">
                     <div id="imageArea" class="thumbnail">
                         <img src="../../static/images/20150904_170026.jpg"
-                             th:src="'/maps/image?fileName=' + ${savedName}" id="mapImage" alt="Map Image"/>
+                             th:src="'/api/images?fileName=' + ${savedName}" id="mapImage" alt="Map Image"/>
                     </div>
                     <div id="tileArea" class="tile-parent"></div>
                 </div>
@@ -46,10 +46,10 @@
                     <div class="col-sm-9">
                         ( <input type="number" class="tile-width" id="tileWidth" name="tileWidth"
                                  th:errorclass="error-input" value="50"/> ,
-                        <input type="number" class="tile-width" id="tileHeight" name="tileHeight"
-                               disabled="disabled"/> )
+                        <input type="number" class="tile-width" id="tileHeight" name="tileHeight" disabled="disabled"/> )
                             <span th:if="${#fields.hasErrors('tileWidth')}" th:errors="*{tileWidth}"
                                   class="error-messages">error!</span>
+                        <input type="hidden" id="ratio" name="ratio" th:value="${ratio}"/>
                     </div>
                 </div>
 
@@ -93,21 +93,30 @@
 
 <div layout:fragment="script">
     <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
-    <script>
-        var $mapImage = $('#mapImage');
-        $('#tileWidth').change(function () {
-            var tileWidth = $(this).val();
-            var ratio = $mapImage.height() / $mapImage.width();
-            var tileHeight = parseInt(tileWidth * ratio);
-            renderTile(tileWidth, tileHeight, $mapImage.width(), $mapImage.height());
-            $('#tileHeight').val(tileHeight);
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+            var $mapImage = $('#mapImage');
+            var $tileWidth = $('#tileWidth');
+            var $tileHeight = $('#tileHeight');
 
-            // tile hover
-            $('.tile').hover(function () {
-                $('#imageXPos').val($(this).attr('data-x'));
-                $('#imageYPos').val($(this).attr('data-y'));
-            });
-        }).change();
+            var ratio = /*[[${ratio}]]*/ 1;
+            var imageAreaWidth = $('#imageArea').width();
+            var imageAreaHeight = parseInt(imageAreaWidth * ratio);
+            $tileWidth.change(function () {
+                var tileWidth = $(this).val();
+                var tileHeight = parseInt(tileWidth * ratio);
+                renderTile(tileWidth, tileHeight, imageAreaWidth, imageAreaHeight);
+                $tileHeight.val(tileHeight);
+
+                // tile hover
+                $('.tile').hover(function () {
+                    $('#imageXPos').val($(this).attr('data-x'));
+                    $('#imageYPos').val($(this).attr('data-y'));
+                });
+            }).change();
+        });
+        /*]]>*/
     </script>
 </div>
 

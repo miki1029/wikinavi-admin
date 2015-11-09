@@ -31,6 +31,8 @@ public class IndoorMapForm {
     private Integer tileWidth;
 
     @NotNull
+    private Double ratio;
+
     private Integer tileHeight;
 
     private Date createdTime;

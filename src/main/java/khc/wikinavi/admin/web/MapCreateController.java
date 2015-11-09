@@ -109,6 +109,9 @@ public class MapCreateController {
     // POST /maps/create
     @RequestMapping(value = "create", method = RequestMethod.POST)
     String create(@Validated IndoorMapForm form, BindingResult result, Model model) throws IOException {
+        if (form.getTileHeight() == null) {
+            form.setTileHeight((int) (form.getTileWidth() * form.getRatio()));
+        }
         logger.info("create(" + form + ", " + result + ")");
 
         if (result.hasErrors()) {

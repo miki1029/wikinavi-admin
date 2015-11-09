@@ -61,6 +61,14 @@ public class IndoorMap {
         return vertexes.stream().filter(vertex -> vertex instanceof Beacon).map(vertex -> (Beacon) vertex).collect(Collectors.toList());
     }
 
+    public List<Edge> getEdges() {
+        Set<Edge> edges = new HashSet<>();
+        for (Vertex vertex : vertexes) {
+            edges.addAll(vertex.getEdges());
+        }
+        return new ArrayList<>(edges);
+    }
+
     // methods
     // 가장 가까운 3개 Vertex 반환
     public List<Vertex> findNearbyVertexes(int x, int y) {

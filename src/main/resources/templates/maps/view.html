@@ -87,7 +87,8 @@
             </table>
 
             <!-- Beacon Info -->
-            <h3>비콘 및 갈림길 정보
+            <h3>비콘 정보
+                <small>갈림길</small>
                 <button class="btn btn-success">입력하기</button>
             </h3>
             <table class="table">
@@ -102,6 +103,25 @@
                     <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
                 </tr>
             </table>
+
+            <!-- Edge Info -->
+            <h3>길 정보
+                <button class="btn btn-success">입력하기</button>
+            </h3>
+            <table class="table">
+                <tr>
+                    <th>위치1<th>
+                    <th>위치2</th>
+                    <th>가중치</th>
+                </tr>
+                <tr th:each="edge : ${edges}">
+                    <td th:text="${edge.vertex1.name}">강당</td>
+                    <td th:text="${edge.vertex2.name}">엘레베이터</td>
+                    <td th:text="${edge.weight}">10</td>
+                </tr>
+            </table>
+
+            <!-- 삭제 -->
             <form th:action="@{/maps/} + ${indoorMap.id} + @{/delete}" method="post">
                 <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
             </form>

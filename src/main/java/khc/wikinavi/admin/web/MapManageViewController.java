@@ -1,6 +1,7 @@
 package khc.wikinavi.admin.web;
 
 import khc.wikinavi.admin.domain.Beacon;
+import khc.wikinavi.admin.domain.Edge;
 import khc.wikinavi.admin.domain.IndoorMap;
 import khc.wikinavi.admin.domain.Room;
 import khc.wikinavi.admin.service.IndoorMapService;
@@ -45,10 +46,12 @@ public class MapManageViewController {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
         List<Room> rooms = indoorMap.getRooms();
         List<Beacon> beacons = indoorMap.getBeacons();
+        List<Edge> edges = indoorMap.getEdges();
 
         model.addAttribute("indoorMap", indoorMap);
         model.addAttribute("rooms", rooms);
         model.addAttribute("beacons", beacons);
+        model.addAttribute("edges", edges);
         return "maps/view";
     }
 

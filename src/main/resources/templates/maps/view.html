@@ -28,7 +28,8 @@
                     <td>
                         ( <input type="number" id="tileWidth" class="tile-width" th:value="${indoorMap.tileWidth}"/> ,
                         <!--( <span id="tileWidth" th:text="${indoorMap.tileWidth}"></span> ,-->
-                        <input type="number" id="tileHeight" class="tile-width" disabled="disabled" th:value="${indoorMap.tileHeight}"/> )
+                        <input type="number" id="tileHeight" class="tile-width" disabled="disabled"
+                               th:value="${indoorMap.tileHeight}"/> )
                     </td>
                 </tr>
                 <tr>
@@ -52,8 +53,7 @@
                 </div>
             </div>
 
-        </div>
-        <!-- col -->
+        </div><!-- /.col -->
 
         <div class="col-md-6">
 
@@ -110,7 +110,7 @@
             </h3>
             <table class="table">
                 <tr>
-                    <th>위치1<th>
+                    <th>위치1</th>
                     <th>위치2</th>
                     <th>가중치</th>
                 </tr>
@@ -126,17 +126,15 @@
                 <input class="btn btn-danger" type="submit" name="form" value="삭제"/>
             </form>
 
-        </div>
-        <!-- col -->
+        </div><!-- /.col -->
 
-    </div>
-    <!-- row -->
-</div>
+    </div><!-- /.row -->
+</div><!-- /.container-->
 
 <div layout:fragment="script">
     <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var $tileWidth = $('#tileWidth');
             var $tileHeight = $('#tileHeight');
             var ratio = $tileHeight.val() / $tileWidth.val();

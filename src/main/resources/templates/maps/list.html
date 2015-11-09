@@ -19,7 +19,9 @@
         </tr>
         <tr th:each="indoorMap : ${indoorMaps}">
             <td th:text="${indoorMap.id}">1</td>
-            <td><a href="#" th:href="@{/maps/} + ${indoorMap.id} + @{/view}" th:text="${indoorMap.title}">신공학관 4층</a></td>
+            <td>
+                <a href="#" th:href="@{/maps/} + ${indoorMap.id} + @{/view}" th:text="${indoorMap.title}">신공학관 4층</a>
+            </td>
             <td th:text="${indoorMap.address}">서울시 중구 필동</td>
         </tr>
     </table>

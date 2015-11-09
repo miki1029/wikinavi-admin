@@ -34,8 +34,7 @@
                 </div>
             </div>
 
-        </div>
-        <!-- col -->
+        </div><!-- col -->
 
         <div class="col-md-6">
             <form class="form-horizontal" th:action="@{/maps/create}" th:object="${indoorMapForm}" method="post">
@@ -46,7 +45,8 @@
                     <div class="col-sm-9">
                         ( <input type="number" class="tile-width" id="tileWidth" name="tileWidth"
                                  th:errorclass="error-input" value="50"/> ,
-                        <input type="number" class="tile-width" id="tileHeight" name="tileHeight" disabled="disabled"/> )
+                        <input type="number" class="tile-width" id="tileHeight" name="tileHeight" disabled="disabled"/>
+                        )
                             <span th:if="${#fields.hasErrors('tileWidth')}" th:errors="*{tileWidth}"
                                   class="error-messages">error!</span>
                         <input type="hidden" id="ratio" name="ratio" th:value="${ratio}"/>
@@ -85,17 +85,16 @@
                 </div>
 
             </form>
-        </div>
-        <!-- col -->
-    </div>
-    <!-- row -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
 </div>
+<!-- /.container-->
 
 <div layout:fragment="script">
     <script src="../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        $(document).ready(function() {
+        $(document).ready(function () {
             var $mapImage = $('#mapImage');
             var $tileWidth = $('#tileWidth');
             var $tileHeight = $('#tileHeight');

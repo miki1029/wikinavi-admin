@@ -1,8 +1,10 @@
 package khc.wikinavi.admin.api;
 
+import khc.wikinavi.admin.api.response.EdgeData;
 import khc.wikinavi.admin.api.response.MapData;
 import khc.wikinavi.admin.api.response.Response;
 import khc.wikinavi.admin.api.response.VertexData;
+import khc.wikinavi.admin.domain.Edge;
 import khc.wikinavi.admin.domain.IndoorMap;
 import khc.wikinavi.admin.domain.Vertex;
 import khc.wikinavi.admin.service.IndoorMapService;
@@ -46,7 +48,7 @@ public class ApiController {
     // GET /api/maps?title={title}&address={address}
     @RequestMapping(value = "maps", method = RequestMethod.GET)
     public Response<MapData> getMaps(@RequestParam(required = false, defaultValue = "") String title,
-                              @RequestParam(required = false, defaultValue = "") String address) {
+                                     @RequestParam(required = false, defaultValue = "") String address) {
         logger.info("건물 검색 API : title=" + title + "&address=" + address);
         List<IndoorMap> indoorMaps = indoorMapService.findLikeTitleAndAddress(title, address);
         List<MapData> mapDatas = new ArrayList<>(indoorMaps.size());
@@ -60,8 +62,8 @@ public class ApiController {
     // GET /api/maps/{mapId}/vertexes?type=[room,beacon]&name={name}
     @RequestMapping(value = "maps/{mapId}/vertexes", method = RequestMethod.GET)
     public Response<VertexData> getVertexes(@PathVariable Integer mapId,
-                                     @RequestParam(required = false) String type,
-                                     @RequestParam(required = false) String name) {
+                                            @RequestParam(required = false) String type,
+                                            @RequestParam(required = false) String name) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
         List<VertexData> vertexDatas = new ArrayList<>();
         List<? extends Vertex> vertexes = null;
@@ -85,12 +87,25 @@ public class ApiController {
         return new Response<>(vertexDatas);
     }
 
+    // Edge 검색 API
+    // GET /api/maps/{mapId}/edges
+    @RequestMapping(value = "maps/{mapId}/edges", method = RequestMethod.GET)
+    public Response<EdgeData> getEdges(@PathVariable Integer mapId) {
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        List<Edge> edges = indoorMap.getEdges();
+        List<EdgeData> edgeDatas = new ArrayList<>(edges.size());
+
+        edgeDatas.addAll(edges.stream().map(edge -> new EdgeData(edge)).collect(Collectors.toList()));
+        
+        return new Response<>(edgeDatas);
+    }
+
     // 최단 경로 검색 API - (x, y) ~ Vertex
     // GET /api/maps/{mapId}/vertexes/end/{vertexId}/start?x={x}&y={y}
     @RequestMapping(value = "maps/{mapId}/vertexes/end/{vertexId}/start", method = RequestMethod.GET)
     public Response<List<VertexData>> getRouteVertexes(@PathVariable Integer mapId,
-                                                @PathVariable Integer vertexId,
-                                                @RequestParam Integer x, @RequestParam Integer y) {
+                                                       @PathVariable Integer vertexId,
+                                                       @RequestParam Integer x, @RequestParam Integer y) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
         Vertex end = vertexService.findOne(vertexId);
         List<Vertex> nearbyVertexes = indoorMap.findNearbyVertexes(x, y);
@@ -112,8 +127,8 @@ public class ApiController {
     // GET /api/maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}
     @RequestMapping(value = "maps/{mapId}/vertexes/end/{endVertexId}/start/{startVertexId}", method = RequestMethod.GET)
     public Response<VertexData> getRouteVertexes(@PathVariable Integer mapId,
-                                          @PathVariable Integer startVertexId,
-                                          @PathVariable Integer endVertexId) {
+                                                 @PathVariable Integer startVertexId,
+                                                 @PathVariable Integer endVertexId) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
         Vertex start = vertexService.findOne(startVertexId);
         Vertex end = vertexService.findOne(endVertexId);

@@ -7,6 +7,7 @@ import khc.wikinavi.admin.domain.IndoorMap;
 import khc.wikinavi.admin.domain.Room;
 import khc.wikinavi.admin.service.IndoorMapService;
 import khc.wikinavi.admin.web.form.IndoorMapForm;
+import khc.wikinavi.admin.web.form.RoomForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +51,22 @@ public class MapModifyController {
     }
 
     @ModelAttribute
-    public IndoorMapForm setUpForm() {
-        logger.info("setupForm()");
+    public IndoorMapForm setUpIndoorMapForm() {
         return new IndoorMapForm();
+    }
+
+    @ModelAttribute
+    public RoomForm setUpRoomForm() {
+        return new RoomForm();
     }
 
     // 기본 정보 수정 view
     // maps/modify/modify.html
     // GET /maps/1/modify
     @RequestMapping(method = RequestMethod.GET)
-    public String modify(@PathVariable("mapId") Integer mapId, Model model) {
+    public String modify(@PathVariable("mapId") Integer mapId, Model model) throws IOException {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        Double ratio = (double) indoorMap.getTileHeight() / indoorMap.getTileWidth();
+        Double ratio = apiController.imageRatio(indoorMap.getImagePath());
 
         model.addAttribute("indoorMap", indoorMap);
         model.addAttribute("ratio", ratio);
@@ -73,7 +78,7 @@ public class MapModifyController {
     // POST /maps/1/modify
     @RequestMapping(method = RequestMethod.POST)
     public String modify(@PathVariable Integer mapId, @Validated IndoorMapForm form,
-                         BindingResult result, Model model) {
+                         BindingResult result, Model model) throws IOException {
         if (form.getTileHeight() == null) {
             form.setTileHeight((int) (form.getTileWidth() * form.getRatio()));
         }
@@ -132,19 +137,50 @@ public class MapModifyController {
         return "redirect:/maps/" + mapId + "/view";
     }
 
+    // 방 정보 추가 view
+    // GET /maps/1/modify/room
     @RequestMapping(value = "room", method = RequestMethod.GET)
-    public String room(@PathVariable("mapId") Integer mapId, Model model) {
+    public String room(@PathVariable("mapId") Integer mapId, Model model) throws IOException {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
         List<Room> rooms = indoorMap.getRooms();
-        List<Beacon> beacons = indoorMap.getBeacons();
-        List<Edge> edges = indoorMap.getEdges();
+        Double ratio = apiController.imageRatio(indoorMap.getImagePath());
 
         model.addAttribute("indoorMap", indoorMap);
         model.addAttribute("rooms", rooms);
-        model.addAttribute("beacons", beacons);
-        model.addAttribute("edges", edges);
+        model.addAttribute("ratio", ratio);
         return "maps/modify/room";
     }
+
+    // 방 정보 추가 process
+    // POST /maps/1/modify/room
+    @RequestMapping(value = "room", method = RequestMethod.POST)
+    public String room(@PathVariable("mapId") Integer mapId, @Validated RoomForm form,
+                       BindingResult result, Model model) throws IOException {
+        logger.info("create(" + form + ", " + result + ")");
+
+        if (result.hasErrors()) {
+            logger.error("result.hasError()");
+            return room(mapId, model);
+        }
+
+        // createdTime, modifiedTime
+        form.setModifiedTime(new Date());
+
+        logger.info(form.toString());
+
+        // indoorMap update
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        Room room = new Room(indoorMap, form.getX(), form.getY(), form.getName());
+        indoorMap.setModifiedTime(new Date());
+
+        logger.info(form.toString());
+        logger.info(indoorMap.toString());
+
+        indoorMapService.update(indoorMap);
+
+        return "redirect:/maps/" + mapId + "/modify/room";
+    }
+
     @RequestMapping(value = "beacon", method = RequestMethod.GET)
     public String beacon(@PathVariable("mapId") Integer mapId, Model model) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
@@ -158,6 +194,7 @@ public class MapModifyController {
         model.addAttribute("edges", edges);
         return "maps/modify/beacon";
     }
+
     @RequestMapping(value = "edge", method = RequestMethod.GET)
     public String edge(@PathVariable("mapId") Integer mapId, Model model) {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);

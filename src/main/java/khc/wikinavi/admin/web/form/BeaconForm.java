@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
  * Created by miki on 15. 10. 14..
  */
 @Data
-public class RoomForm {
+public class BeaconForm {
     @NotNull
     @Min(1)
     private Integer x;
@@ -19,7 +19,10 @@ public class RoomForm {
     @Min(1)
     private Integer y;
 
-    @NotNull
     @Size(min = 1, max = 45)
     private String name;
+
+    @NotNull
+    @Size(min = 17, max = 17)
+    private String macAddr;
 }

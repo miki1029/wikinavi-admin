@@ -2,10 +2,10 @@ package khc.wikinavi.admin.web;
 
 import khc.wikinavi.admin.api.ApiController;
 import khc.wikinavi.admin.domain.Beacon;
-import khc.wikinavi.admin.domain.Edge;
 import khc.wikinavi.admin.domain.IndoorMap;
 import khc.wikinavi.admin.domain.Room;
 import khc.wikinavi.admin.service.IndoorMapService;
+import khc.wikinavi.admin.web.form.BeaconForm;
 import khc.wikinavi.admin.web.form.IndoorMapForm;
 import khc.wikinavi.admin.web.form.RoomForm;
 import org.slf4j.Logger;
@@ -58,6 +58,11 @@ public class MapModifyController {
     @ModelAttribute
     public RoomForm setUpRoomForm() {
         return new RoomForm();
+    }
+
+    @ModelAttribute
+    public BeaconForm setUpBeaconForm() {
+        return new BeaconForm();
     }
 
     // 기본 정보 수정 view
@@ -163,9 +168,6 @@ public class MapModifyController {
             return room(mapId, model);
         }
 
-        // createdTime, modifiedTime
-        form.setModifiedTime(new Date());
-
         logger.info(form.toString());
 
         // indoorMap update
@@ -181,31 +183,45 @@ public class MapModifyController {
         return "redirect:/maps/" + mapId + "/modify/room";
     }
 
+    // 비콘 정보 추가 view
+    // GET /maps/1/modify/beacon
     @RequestMapping(value = "beacon", method = RequestMethod.GET)
-    public String beacon(@PathVariable("mapId") Integer mapId, Model model) {
+    public String beacon(@PathVariable("mapId") Integer mapId, Model model) throws IOException {
         IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Room> rooms = indoorMap.getRooms();
         List<Beacon> beacons = indoorMap.getBeacons();
-        List<Edge> edges = indoorMap.getEdges();
+        Double ratio = apiController.imageRatio(indoorMap.getImagePath());
 
         model.addAttribute("indoorMap", indoorMap);
-        model.addAttribute("rooms", rooms);
         model.addAttribute("beacons", beacons);
-        model.addAttribute("edges", edges);
+        model.addAttribute("ratio", ratio);
         return "maps/modify/beacon";
     }
 
-    @RequestMapping(value = "edge", method = RequestMethod.GET)
-    public String edge(@PathVariable("mapId") Integer mapId, Model model) {
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Room> rooms = indoorMap.getRooms();
-        List<Beacon> beacons = indoorMap.getBeacons();
-        List<Edge> edges = indoorMap.getEdges();
+    // 방 정보 추가 process
+    // POST /maps/1/modify/beacon
+    @RequestMapping(value = "beacon", method = RequestMethod.POST)
+    public String beacon(@PathVariable("mapId") Integer mapId, @Validated BeaconForm form,
+                       BindingResult result, Model model) throws IOException {
+        logger.info("create(" + form + ", " + result + ")");
 
-        model.addAttribute("indoorMap", indoorMap);
-        model.addAttribute("rooms", rooms);
-        model.addAttribute("beacons", beacons);
-        model.addAttribute("edges", edges);
-        return "maps/modify/edge";
+        if (result.hasErrors()) {
+            logger.error("result.hasError()");
+            return beacon(mapId, model);
+        }
+
+        logger.info(form.toString());
+
+        // indoorMap update
+        IndoorMap indoorMap = indoorMapService.findOne(mapId);
+        Beacon beacon = new Beacon(indoorMap, form.getX(), form.getY(), form.getName(), form.getMacAddr());
+        indoorMap.setModifiedTime(new Date());
+
+        logger.info(form.toString());
+        logger.info(indoorMap.toString());
+
+        indoorMapService.update(indoorMap);
+
+        return "redirect:/maps/" + mapId + "/modify/beacon";
     }
+
 }

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Wikinavi</title>
+    <link href="../../../static/css/wikinavi.css" th:href="@{/css/dotted-tile.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Contents -->
+<div class="container" layout:fragment="content">
+
+    <!-- Title, Address -->
+    <div class="page-header">
+        <h1>
+            <span th:text="${indoorMap.title}">건물 이름</span>
+            <small th:text="${indoorMap.address}">주소</small>
+        </h1>
+    </div>
+
+    <!-- Map Info -->
+    <div class="row">
+        <!-- Menu -->
+        <div class="col-xs-12 col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a href="../view.html" th:href="@{/maps/} + ${indoorMap.id} + @{/view}">
+                        정보 보기</a></li>
+                <li role="presentation">
+                    <a href="modify.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify}">
+                        기본 정보 수정</a></li>
+                <li role="presentation">
+                    <a href="image.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/image}">
+                        지도 이미지 변경</a></li>
+                <li role="presentation">
+                    <a href="room.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/room}">
+                        방 정보 입력</a></li>
+                <li role="presentation">
+                    <a href="beacon.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/beacon}">
+                        비콘 정보 입력</a></li>
+                <li role="presentation" class="active">
+                    <a href="edge.html" th:href="@{/maps/} + ${indoorMap.id} + @{/modify/edge}">
+                        길 정보 입력</a></li>
+            </ul>
+        </div>
+
+        <!-- Modify Info -->
+        <div class="col-xs-12 col-md-10">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <!-- images -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div id="imageArea" class="thumbnail">
+                                <img src="../../../static/images/20150904_170026.jpg"
+                                     th:src="'/api/images?fileName=' + ${indoorMap.imagePath}"
+                                     id="mapImage" alt="Map Image"/>
+                            </div>
+                            <div id="tileArea" class="tile-parent"></div>
+                        </div>
+                    </div>
+                </div><!-- /.col -->
+
+                <div class="col-md-6">
+
+                    <!-- Edge Info -->
+                    <h3>길 정보</h3>
+                    <table class="table">
+                        <tr>
+                            <th>위치1</th>
+                            <th>위치2</th>
+                            <th>가중치</th>
+                        </tr>
+                        <tr th:each="edge : ${edges}">
+                            <td th:text="${edge.vertex1.name}">강당</td>
+                            <td th:text="${edge.vertex2.name}">엘레베이터</td>
+                            <td th:text="${edge.weight}">10</td>
+                        </tr>
+                    </table>
+
+                    <!-- 길 추가 -->
+                    <h3>길 추가</h3>
+                    <form class="form-horizontal" th:action="@{/maps/} + ${indoorMap.id} + @{/modify/edge}"
+                          th:object="${edgeForm}" method="post">
+
+                        <div class="form-group">
+                            <label for="vertexId1" class="col-sm-3 control-label">위치1</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="vertexId1" name="vertexId1" placeholder="위치 id 입력"
+                                       th:field="*{vertexId1}" value="1"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vertexId2" class="col-sm-3 control-label">위치2</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="vertexId2" name="vertexId2" placeholder="위치 id 입력"
+                                       th:field="*{vertexId2}" value="2"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-default">추가</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div><!-- /.col -->
+
+            </div><!-- /.row -->
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <!-- Room Info -->
+                    <h3>방 정보 <small>입구 좌표</small></h3>
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>좌표</th>
+                            <th>방 이름</th>
+                        </tr>
+                        <tr th:each="room : ${rooms}">
+                            <td th:text="${room.id}">1</td>
+                            <td>(<span th:text="${room.x}">5</span>,<span th:text="${room.y}">5</span>)</td>
+                            <td th:text="${room.name}">강당</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Beacon Info -->
+                    <h3>비콘 정보 <small>갈림길</small></h3>
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>좌표</th>
+                            <th>비콘 이름</th>
+                            <th>맥 주소</th>
+                        </tr>
+                        <tr th:each="beacon : ${beacons}">
+                            <td th:text="${beacon.id}">2</td>
+                            <td>(<span th:text="${beacon.x}">5</span>,<span th:text="${beacon.y}">5</span>)</td>
+                            <td th:text="${beacon.name}">엘레베이터 앞</td>
+                            <td th:text="${beacon.macAddr}">00-00-00-00-00-00</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div><!-- /.row -->
+
+        </div>
+    </div><!-- /.row -->
+
+</div><!-- /.container-->
+
+<div layout:fragment="script">
+    <script src="../../../static/js/tile.js" th:src="@{/js/tile.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            $('#title').val(/*[[${indoorMap.title}]]*/);
+            $('#address').val(/*[[${indoorMap.address}]]*/);
+
+            var ratio = /*[[${ratio}]]*/ 1;
+            var imageAreaWidth = $('#imageArea').width();
+            var imageAreaHeight = parseInt(imageAreaWidth * ratio);
+
+            var tileWidth = /*[[${indoorMap.tileWidth}]]*/ 50;
+            var tileHeight = parseInt(tileWidth * ratio);
+
+            renderTile(tileWidth, tileHeight, imageAreaWidth, imageAreaHeight);
+
+            // tile hover
+            /*            $('.tile').hover(function () {
+             $('#imageXPos').val($(this).attr('data-x'));
+             $('#imageYPos').val($(this).attr('data-y'));
+             });*/
+
+            $('.tile').click(function () {
+                $('#x').val($(this).attr('data-x'));
+                $('#y').val($(this).attr('data-y'));
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+
+</body>
+</html>

@@ -1,13 +1,9 @@
 package khc.wikinavi.admin.web;
 
 import khc.wikinavi.admin.api.ApiController;
-import khc.wikinavi.admin.domain.Beacon;
 import khc.wikinavi.admin.domain.IndoorMap;
-import khc.wikinavi.admin.domain.Room;
 import khc.wikinavi.admin.service.IndoorMapService;
-import khc.wikinavi.admin.web.form.BeaconForm;
 import khc.wikinavi.admin.web.form.IndoorMapForm;
-import khc.wikinavi.admin.web.form.RoomForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +16,22 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by miki on 15. 11. 8..
  */
 @Controller
 @RequestMapping("maps/{mapId}/modify")
-public class MapModifyController {
+public class IndoorMapController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapManageViewController.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndoorMapController.class);
 
-    @Autowired                          private ApiController apiController;
-    @Autowired                          private MapCreateController mapCreateController;
-    @Autowired                          private IndoorMapService indoorMapService;
-    @Resource(name = "uploadPath")      private String uploadPath;
-    @Resource(name = "fileDateFormat")  private DateFormat fileDateFormat;
+    @Autowired private ApiController apiController;
+    @Autowired private MapCreateController mapCreateController;
+    @Autowired private IndoorMapService indoorMapService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -53,16 +44,6 @@ public class MapModifyController {
     @ModelAttribute
     public IndoorMapForm setUpIndoorMapForm() {
         return new IndoorMapForm();
-    }
-
-    @ModelAttribute
-    public RoomForm setUpRoomForm() {
-        return new RoomForm();
-    }
-
-    @ModelAttribute
-    public BeaconForm setUpBeaconForm() {
-        return new BeaconForm();
     }
 
     // 기본 정보 수정 view
@@ -140,88 +121,6 @@ public class MapModifyController {
         indoorMapService.update(indoorMap);
 
         return "redirect:/maps/" + mapId + "/view";
-    }
-
-    // 방 정보 추가 view
-    // GET /maps/1/modify/room
-    @RequestMapping(value = "room", method = RequestMethod.GET)
-    public String room(@PathVariable("mapId") Integer mapId, Model model) throws IOException {
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Room> rooms = indoorMap.getRooms();
-        Double ratio = apiController.imageRatio(indoorMap.getImagePath());
-
-        model.addAttribute("indoorMap", indoorMap);
-        model.addAttribute("rooms", rooms);
-        model.addAttribute("ratio", ratio);
-        return "maps/modify/room";
-    }
-
-    // 방 정보 추가 process
-    // POST /maps/1/modify/room
-    @RequestMapping(value = "room", method = RequestMethod.POST)
-    public String room(@PathVariable("mapId") Integer mapId, @Validated RoomForm form,
-                       BindingResult result, Model model) throws IOException {
-        logger.info("create(" + form + ", " + result + ")");
-
-        if (result.hasErrors()) {
-            logger.error("result.hasError()");
-            return room(mapId, model);
-        }
-
-        logger.info(form.toString());
-
-        // indoorMap update
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        Room room = new Room(indoorMap, form.getX(), form.getY(), form.getName());
-        indoorMap.setModifiedTime(new Date());
-
-        logger.info(form.toString());
-        logger.info(indoorMap.toString());
-
-        indoorMapService.update(indoorMap);
-
-        return "redirect:/maps/" + mapId + "/modify/room";
-    }
-
-    // 비콘 정보 추가 view
-    // GET /maps/1/modify/beacon
-    @RequestMapping(value = "beacon", method = RequestMethod.GET)
-    public String beacon(@PathVariable("mapId") Integer mapId, Model model) throws IOException {
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        List<Beacon> beacons = indoorMap.getBeacons();
-        Double ratio = apiController.imageRatio(indoorMap.getImagePath());
-
-        model.addAttribute("indoorMap", indoorMap);
-        model.addAttribute("beacons", beacons);
-        model.addAttribute("ratio", ratio);
-        return "maps/modify/beacon";
-    }
-
-    // 방 정보 추가 process
-    // POST /maps/1/modify/beacon
-    @RequestMapping(value = "beacon", method = RequestMethod.POST)
-    public String beacon(@PathVariable("mapId") Integer mapId, @Validated BeaconForm form,
-                       BindingResult result, Model model) throws IOException {
-        logger.info("create(" + form + ", " + result + ")");
-
-        if (result.hasErrors()) {
-            logger.error("result.hasError()");
-            return beacon(mapId, model);
-        }
-
-        logger.info(form.toString());
-
-        // indoorMap update
-        IndoorMap indoorMap = indoorMapService.findOne(mapId);
-        Beacon beacon = new Beacon(indoorMap, form.getX(), form.getY(), form.getName(), form.getMacAddr());
-        indoorMap.setModifiedTime(new Date());
-
-        logger.info(form.toString());
-        logger.info(indoorMap.toString());
-
-        indoorMapService.update(indoorMap);
-
-        return "redirect:/maps/" + mapId + "/modify/beacon";
     }
 
 }

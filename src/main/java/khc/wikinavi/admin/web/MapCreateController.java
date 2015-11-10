@@ -33,7 +33,7 @@ import java.util.UUID;
 @RequestMapping("maps")
 public class MapCreateController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapManageViewController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MapCreateController.class);
 
     @Autowired                          private ApiController apiController;
     @Autowired                          private IndoorMapService indoorMapService;

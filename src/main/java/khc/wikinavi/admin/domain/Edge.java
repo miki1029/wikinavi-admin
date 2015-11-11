@@ -1,7 +1,6 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -10,7 +9,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class Edge {
 
@@ -64,5 +65,21 @@ public class Edge {
         if(!vertex2.getEdges2().contains(this)) {
             vertex2.getEdges2().add(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Edge edge = (Edge) o;
+
+        return id.equals(edge.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

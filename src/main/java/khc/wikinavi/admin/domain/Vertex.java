@@ -1,6 +1,7 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ import java.util.List;
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@Data
+@Getter
+@Setter
 public abstract class Vertex {
 
     // data
@@ -49,6 +51,22 @@ public abstract class Vertex {
         if(!indoorMap.getVertexes().contains(this)) {
             indoorMap.getVertexes().add(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vertex vertex = (Vertex) o;
+
+        return id.equals(vertex.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override

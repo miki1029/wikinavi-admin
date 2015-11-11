@@ -1,8 +1,8 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -15,8 +15,8 @@ import javax.persistence.Table;
 @Entity
 @Table
 @DiscriminatorValue("beacon")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 @NoArgsConstructor
 public class Beacon extends Vertex {
 

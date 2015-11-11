@@ -1,7 +1,9 @@
 package khc.wikinavi.admin.domain;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.*;
@@ -12,7 +14,9 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class IndoorMap {
 
@@ -67,6 +71,22 @@ public class IndoorMap {
             edges.addAll(vertex.getEdges());
         }
         return new ArrayList<>(edges);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IndoorMap indoorMap = (IndoorMap) o;
+
+        return id.equals(indoorMap.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     // methods

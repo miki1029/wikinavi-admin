@@ -51,9 +51,9 @@ public class ShortestPathUtil {
         Set<ShortestPathVertex> spVertexes = new HashSet<>();
 
         // 주변 정점
-        TreeSet<ShortestPathVertex> surroundVertexes = new TreeSet<>();
+        LinkedList<ShortestPathVertex> surroundVertexes = new LinkedList<>();
         surroundVertexes.add(new ShortestPathVertex(start, 0));
-        surroundVertexes.first().path.add(surroundVertexes.first().vertex);
+        surroundVertexes.getFirst().path.add(surroundVertexes.getFirst().vertex);
 
         // 최단 경로 계산
         while (vertexes.size() > spVertexes.size()) {
@@ -81,6 +81,7 @@ public class ShortestPathUtil {
                     newSpVertex.path.addAll(pollVertex.path);
                     newSpVertex.path.add(newSpVertex.vertex);
                     surroundVertexes.add(newSpVertex);
+                    Collections.sort(surroundVertexes);
                 }
                 // 기존 정점이면 기존 값과 pollVertex 의 가중치와 합한 값을 비교하여 작은 쪽으로 교체
                 else if (curSpVertex.weightSum > weight) {
